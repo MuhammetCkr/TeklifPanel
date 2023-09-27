@@ -24,7 +24,7 @@ namespace TeklifPanel.Core
             var randomName = $"{url}-{Guid.NewGuid()}{extension}";
 
             var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/Content/images/C" + companyId);
-            Directory.CreateDirectory(folderPath); 
+            Directory.CreateDirectory(folderPath);
             var path = Path.Combine(folderPath, randomName);
 
             using (var stream = new FileStream(path, FileMode.Create))
@@ -40,7 +40,11 @@ namespace TeklifPanel.Core
             var randomName = $"{url}-{Guid.NewGuid()}{extension}";
 
             var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/Content/pdfs/C" + companyId);
-            Directory.CreateDirectory(folderPath); // Klasörü oluşturur
+
+            if (!Directory.Exists(folderPath))
+            {
+                Directory.CreateDirectory(folderPath); // Klasörü oluşturur
+            }
 
             var pdfPath = Path.Combine(folderPath, randomName);
 
