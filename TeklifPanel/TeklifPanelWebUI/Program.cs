@@ -14,8 +14,6 @@ using TeklifPanelWebUI.Models;
 var builder = WebApplication.CreateBuilder(args);
 
 //builder.Services.AddDbContext<TeklifPanelContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("SqlServerConnectionLocal")));
-//builder.Services.AddDbContext<TeklifPanelContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("SqlServerConnectionTest")));
-//builder.Services.AddDbContext<TeklifPanelContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("SqlServerConnection")));
 builder.Services.AddDbContext<TeklifPanelContext>(options => options.UseSqlite(builder.Configuration.GetConnectionString("SqlLiteConnection")));
 
 
