@@ -1,8 +1,8 @@
 SuperAdmin
--UserName: superadmin@gmail.com
+-UserName: super@admin.com
 -Password: Qwe123.
 
 Admin
--UserName: admin@gmail.com
+-UserName: admin@admin.com
 -Password: Qwe123.
 
