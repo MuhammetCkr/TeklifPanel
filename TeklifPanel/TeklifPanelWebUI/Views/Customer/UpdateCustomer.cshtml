@@ -50,6 +50,10 @@
         </div>
         <div class="form-group">
             <label for="exampleFormControlTextarea1">Yalnızca Sizin Göreceğiniz Firmaya Ait Notlar</label>
+            <textarea class="form-control" id="exampleFormControlTextarea1" name="SpecialNote" rows="3">@Model.SpecialNote</textarea>
+        </div>
+        <div class="form-group">
+            <label for="exampleFormControlTextarea1">Teklif içerisinde gösterilecek notlar</label>
             <textarea class="form-control" id="exampleFormControlTextarea1" name="Note" rows="3">@Model.Note</textarea>
         </div>
         <div class="form-group">
@@ -155,34 +159,34 @@
     document.getElementById('addContactPerson').addEventListener('click', function () {
         var contactPerson = document.getElementById('contactPerson');
         var contactHtml = `
-                <div class="contact-entry mb-4">
-                    <div class="form-row row">
-                        <div class="form-group col-lg-5 col-md-5 col-12">
-                            <label for="inputName">Yetkili Adı</label>
-                            <input type="text" class="form-control" id="inputName" name="ContactName" placeholder="Ad" required>
+                    <div class="contact-entry mb-4">
+                        <div class="form-row row">
+                            <div class="form-group col-lg-5 col-md-5 col-12">
+                                <label for="inputName">Yetkili Adı</label>
+                                <input type="text" class="form-control" id="inputName" name="ContactName" placeholder="Ad" required>
+                            </div>
+                            <div class="form-group col-lg-5 col-md-5 col-12">
+                                <label for="inputPTel">Yetkili Departmanı</label>
+                                <input type="text" class="form-control" id="inputTel" name="Department" placeholder="Departman" required>
+                            </div>
                         </div>
-                        <div class="form-group col-lg-5 col-md-5 col-12">
-                            <label for="inputPTel">Yetkili Departmanı</label>
-                            <input type="text" class="form-control" id="inputTel" name="Department" placeholder="Departman" required>
-                        </div>
-                    </div>
 
-                    <div class="form-row row">
-                        <div class="form-group col-lg-5 col-md-5 col-12">
-                            <label for="inputName">Yetkili Maili</label>
-                            <input type="email" class="form-control" id="inputName" name="ContactEmail" placeholder="Mail" required>
-                        </div>
-                        <div class="form-group col-lg-5 col-md-5 col-12">
-                            <label for="inputPTel">Yetkili Numarası</label>
-                            <input type="number" class="form-control" id="inputTel" name="ContactPhone" placeholder="Telefon" required>
-                        </div>
-                        <div class="form-group col-lg-1 col-md-1 col-12">
-                            <button class=" btn btn-outline-danger  remove-contact" >Sil</button>
+                        <div class="form-row row">
+                            <div class="form-group col-lg-5 col-md-5 col-12">
+                                <label for="inputName">Yetkili Maili</label>
+                                <input type="email" class="form-control" id="inputName" name="ContactEmail" placeholder="Mail" required>
+                            </div>
+                            <div class="form-group col-lg-5 col-md-5 col-12">
+                                <label for="inputPTel">Yetkili Numarası</label>
+                                <input type="number" class="form-control" id="inputTel" name="ContactPhone" placeholder="Telefon" required>
+                            </div>
+                            <div class="form-group col-lg-1 col-md-1 col-12">
+                                <button class=" btn btn-outline-danger  remove-contact" >Sil</button>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <hr />
-                        `;
+                    <hr />
+                            `;
         contactPerson.insertAdjacentHTML('beforeend', contactHtml);
 
     });

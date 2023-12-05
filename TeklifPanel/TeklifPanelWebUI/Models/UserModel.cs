@@ -23,5 +23,6 @@ namespace TeklifPanelWebUI.Models
         [DataType(DataType.Password)]
         [Compare("Password", ErrorMessage = "Şifreler uyuşmuyor!")]
         public string RePassword { get; set; }
+        public bool IsOfferShow { get; set; }
     }
 }

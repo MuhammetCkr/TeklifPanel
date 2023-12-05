@@ -99,7 +99,17 @@ namespace TeklifPanel.Data.Concrete.EfCore
                 Type = "AdresAyarlari"
             };
 
-            await context.AddRangeAsync(recipientEmail, emailServer, emailServerPort, emailUsername, emailPassword, logo, logo2, phone, fax, address);
+            var note = new CompanySettings()
+            {
+                CompanyId = companyId,
+                Parameter = "Not",
+                Value = "",
+                Type = "FirmaAyarlari"
+            };
+
+
+            await context.AddRangeAsync(recipientEmail, emailServer, emailServerPort, emailUsername, emailPassword, logo, logo2, phone, fax, address, note);
+
             var result = await context.SaveChangesAsync();
             return result > 0;
         }

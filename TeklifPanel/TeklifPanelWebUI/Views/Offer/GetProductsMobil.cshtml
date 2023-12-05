@@ -1,0 +1,57 @@
+﻿@{
+    Layout = null;
+}
+@model List<ProductViewModel>
+
+@foreach (var product in Model)
+{
+    var productCurrency = product.Currency == "tl" ? "₺" :
+                 product.Currency == "usd" ? "$" :
+                 product.Currency == "eu" ? "€" :
+                 product.Currency == "gbp" ? "£" : "";
+
+    <tr data-bs-toggle="popover" data-bs-placement="right"
+        data-bs-custom-class="custom-popover"
+        data-bs-html="true"
+        data-bs-title="Geçmiş Teklifler"
+        data-bs-content="@Html.Raw("<h6>Tarih-İskonto-Fiyat</h6><ul class='p-0 m-0'>" + string.Join("", product.ProductOffers.Where(p => p.ProductId == product.Id && p.Offer.UserId == product.User.Id).OrderByDescending(p => p.Offer.DateOfOffer).Take(5).Select(p =>"<li> -> " + p.Offer.DateOfOffer.ToShortDateString() + " - "+ p.Discount  + " - " + p.ProductSellPrice.ToString("N2") + ' ' + (p.Offer.CurrenyType == "doviz" ? productCurrency : "₺"))) + "</li>"+ "</ul>")">
+        @{
+            string className = "seletedItemMobile" + product.Id;
+        }
+        <td class="text-center @className">@product.CategoryName</td>
+        <td class="text-center @className">@product.Name</td>
+        <td class="text-center">@product.Code</td>
+        <td class="text-center">@(product.Currency == "tl" ? "₺" : product.Currency == "usd" ? "$" : product.Currency == "eu" ? "€" : "£")@product.SellPrice?.ToString("N2")</td>
+        <td class="text-center @className">@product.Discount</td>
+        <td class="text-center">
+            <div class="form-check form-switch" style="padding: 0;">
+                <input id="@className" class="@className" onchange="isSelectedMobile(@product.Id)" type="checkbox" name="IsSeleted" style="margin: 0;">
+                <input type="hidden" class="temp" value="@product.Id">
+            </div>
+        </td>
+    </tr>
+}
+
+<script>
+    $(document).ready(function () {
+        var checkboxes = document.querySelectorAll('input[type="checkbox"]');
+        $('[data-bs-toggle="popover"]').popover({
+            html: true,
+            content: function () {
+                return $(this).data('content');
+            }
+        });
+        $('[data-bs-toggle="popover"]').on('mouseleave', function () {
+            $(this).popover('hide');
+        });
+        checkboxes.forEach(function (checkbox) {
+            checkbox.addEventListener('change', function () {
+                if (this.checked) {
+                    $('[data-bs-toggle="popover"]').popover('hide');
+                }
+            });
+        });
+    });
+
+</script>
+

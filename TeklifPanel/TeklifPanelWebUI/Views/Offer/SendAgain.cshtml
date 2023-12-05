@@ -1,0 +1,133 @@
+﻿@model List<Customer>
+<div class="container-fluid">
+    <div class="card px-0 pb-0 mb-3">
+        <div id="msform">
+            <form asp-controller="Offer" asp-action="SendAgain" method="post" onsubmit="return send()">
+                <fieldset>
+                    <div class="form-card">
+
+                        <div class="row">
+                            <div class="col-7 mt-3">
+                                <h2 class="fs-title">Müşteriler:</h2>
+                            </div>
+                            <div class="col-5">
+                                <h2 class="steps">Adım 1 - 4</h2>
+                            </div>
+                        </div>
+                        <label for="customerId" class="fieldlabels">Müşteri Seçin:</label>
+                        <select id="customerId" name="customerId" onchange="getContactPersonList()">
+                            <option>Seçiniz</option>
+                            @foreach (var customer in Model)
+                            {
+                                <option value="@customer.Id">@customer.Name</option>
+                            }
+                        </select>
+                        <div id="contactPersonList">
+                            <label for="contactPersons" class="fieldlabels">Yetkiliyi Seçin:</label>
+                            <select id="contactPersons" name="contactPersonId">
+                                <option>Seçiniz</option>
+                                @* PartialView ContackPerson *@
+                            </select>
+                        </div>
+                    </div>
+                    <div id="ccPerson" class="row">
+                        <div class="form-row row ">
+                            @*Burası JavaScript ile ekleniyor*@
+                        </div>
+                    </div>
+                    <div class="yetkiliekle">
+                        <p>CC Ekle</p>
+                        <i id="addCc" class="fas fa-plus" style="cursor:pointer"></i>
+                    </div>
+
+@*                   <div class="form-group" id="specialNote">
+                        PartialView - SpecialNote
+                    </div>*@
+
+                    <div class="form-group">
+                        <img src="@Jobs.PdfRoute@ViewBag.CompanyId/@ViewBag.Pdf" />
+                    </div>
+                    <input type="hidden" name="pdf" value="@ViewBag.Pdf" />
+                    <input type="hidden" name="offerId" value="@ViewBag.OfferId" />
+                    <input type="submit" class="next action-button " value="GÖNDER"  style="cursor:pointer;" />
+
+                </fieldset>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+@* CC Ekle *@
+<script>
+    document.getElementById("addCc").addEventListener('click', function () {
+        var ccPerson = document.getElementById("ccPerson");
+        var ccHtml = `
+                    <div class="contact-entry mb-4">
+                        <div class="form-row row">
+
+                                <label for="inputName"> CC Emaili</label>
+
+                            <div class="form-group col-lg-5 col-md-5 col-12">
+                                <input type="email" class="form-control ccPerson" id="ccEmail" name="CcEmail" placeholder="CC Email" required>
+                            </div>
+
+                            <div class="form-group col-lg-1 col-md-1 col-12">
+                                <button class=" btn btn-danger  remove-contact" >Sil</button>
+                            </div>
+
+                        </div>
+                    <hr />
+                    </div>
+                        `;
+        ccPerson.insertAdjacentHTML('beforeend', ccHtml);
+
+    });
+    //CcPerson Silme
+    document.getElementById('ccPerson').addEventListener('click', function (e) {
+        if (e.target.classList.contains('remove-contact')) {
+            e.target.closest('.contact-entry').remove();
+        }
+    });
+</script>
+
+@*Müşterilerin İletişim kişilerini getirme*@
+<script>
+
+    function getContactPersonList() {
+        let customerId = $("#customerId").val();
+        let customerSelectedButton = document.getElementById("customerSelected");
+
+        $.ajax({
+            type: "GET",
+            url: "/Offer/ContactPersons?customerId=" + customerId,
+            success: function (data) {
+                $("#contactPersonList").html(data);
+                $.ajax({
+                    type: 'GET',
+                    url: '/Offer/SpecialNote?customerId=' + customerId,
+                    success: function (result) {
+                        $("#specialNote").html(result);
+
+                    }
+                })
+            }
+        });
+
+    }
+</script>
+
+<script>
+    function send() {
+        let customerId = $('#customerId').val();
+        if (customerId == "Seçiniz") {
+            Swal.fire(
+                'Dikkat!',
+                'Lütfen Müşteri seçiniz!" ',
+                'warning'
+            )
+            return false;
+        }
+        return true;
+    }
+</script>

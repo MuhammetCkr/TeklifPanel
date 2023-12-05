@@ -14,7 +14,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 }
-<div class="row" style="margin: 2% 6%;">
+<div class="row" style="margin: 2% 0%;">
     <div class="col-lg-7 col-md-7 col-12">
         <div class="table-title">
             <h3>Kullanıcılar</h3>
@@ -32,12 +32,16 @@
 
 </div>
 
-<table class="table-fill">
+<table class="table-fill normal-tablo">
     <thead>
         <tr>
             <th class="text-center">Adı</th>
             <th class="text-center">Soyadı</th>
             <th class="text-center">Mail Adresi</th>
+            <th class="text-center">Gönderdiği Teklifler</th>
+            <th class="text-center">Onaylanan Teklifler</th>
+            <th class="text-center">Onaylanmayan Teklifler</th>
+            <th class="text-center">Açıkta Bekleyen Teklifler</th>
             <th class="text-center">İşlemler</th>
         </tr>
     </thead>
@@ -62,6 +66,10 @@
                         <td class="text-center">@user.FirstName</td>
                         <td class="text-center">@user.LastName</td>
                         <td class="text-center">@user.Email</td>
+                        <td class="text-center">@user.Offers.Count</td>
+                        <td class="text-center">@user.Offers.Where(o => o.IsApproved).Count()</td>
+                        <td class="text-center">@user.Offers.Where(o => !o.IsApproved).Count()</td>
+                        <td class="text-center"></td>
                         <td class="text-center">
                             <a class="btn btn-outline-success" asp-controller="Admin" asp-action="UserEdit" asp-route-id="@user.Id"><i class="fas fa-pen" style="padding-right: 6%;"></i></a>
                             <a class="btn btn-outline-danger" onclick="isDeleted('@user.Id')"><i class="fas fa-times"></i></a>
@@ -72,6 +80,51 @@
         }
     </tbody>
 </table>
+
+<table class="table-fill mobile-tablo">
+    <thead>
+        <tr>
+            <th class="text-center">Mail Adresi</th>
+            <th class="text-center">Detay</th>
+            <th class="text-center">İşlemler</th>
+        </tr>
+    </thead>
+    <tbody class="table-hover">
+        @{
+            if (User.IsInRole("Admin"))
+            {
+                var userName = User.Identity.Name.ToString();
+                var admin = Model.FirstOrDefault(x => x.UserName == userName);
+                //<tr>
+                //    <td class="text-center">@admin.FirstName</td>
+                //    <td class="text-center">@admin.LastName</td>
+                //    <td class="text-center">@admin.Email</td>
+                //    <td class="text-center">
+                //        <a class="btn btn-outline-success" asp-controller="Admin" asp-action="UserEdit" asp-route-id="@admin.Id"><i class="fas fa-pen" style="padding-right: 6%;"></i></a>
+                //    </td>
+                //</tr>
+
+                foreach (var user in Model.Where(x => x.UserName != userName))
+                {
+                    <tr>
+                        <td class="text-center">@user.Email</td>
+                        <td class="text-center">
+                            <a asp-controller="Admin" asp-action="UserDetail" asp-route-id="@user.Id">
+                                <i class="fas fa-info-circle" style="font-size: 25px; color: #FF5722;"></i>
+                            </a>
+                        </td>
+                        <td class="text-center">
+                            <a class="btn btn-outline-success" asp-controller="Admin" asp-action="UserEdit" asp-route-id="@user.Id"><i class="fas fa-pen" style="padding-right: 6%;"></i></a>
+                            <a class="btn btn-outline-danger" onclick="isDeleted('@user.Id')"><i class="fas fa-times"></i></a>
+                        </td>
+                    </tr>
+                }
+            }
+        }
+    </tbody>
+</table>
+
+
 
 <script>
     function isDeleted(id) {
@@ -90,7 +143,6 @@
                     url: '/Admin/UserDelete',
                     data: { id: id },
                     success: function (res) {
-                        console.log(res.status);
                         if (res.status == 200) {
                             Swal.fire({
                                 icon: 'success',

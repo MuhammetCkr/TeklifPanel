@@ -15,10 +15,12 @@ namespace TeklifPanelWebUI.Controllers
     public class AdminController : Controller
     {
         private readonly UserManager<User> _userManager;
+        private readonly IUserService _userService;
 
-        public AdminController(UserManager<User> userManager)
+        public AdminController(UserManager<User> userManager, IUserService userService)
         {
             _userManager = userManager;
+            _userService = userService;
         }
 
         public IActionResult Index()
@@ -29,7 +31,7 @@ namespace TeklifPanelWebUI.Controllers
         public async Task<IActionResult> UserList()
         {
             var companyId = HttpContext.Session.GetInt32("CompanyId");
-            var userList = await _userManager.Users.Where(u => u.CompanyId == companyId).ToListAsync();
+            var userList = await _userService.GetUsersByCompany(companyId ?? default);
             return View(userList);
         }
         [HttpGet]
@@ -47,6 +49,7 @@ namespace TeklifPanelWebUI.Controllers
                     FirstName = userModel.FirstName,
                     LastName = userModel.LastName,
                     Email = userModel.Email,
+                    IsOfferShow = userModel.IsOfferShow,
                 };
 
                 user.UserName = Jobs.MakeUserName(userModel.FirstName) + "-" + Jobs.MakeUserName(userModel.LastName);
@@ -80,6 +83,7 @@ namespace TeklifPanelWebUI.Controllers
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Email = user.Email,
+                IsOfferShow = user.IsOfferShow,
             };
             return View(userModel);
         }
@@ -92,6 +96,7 @@ namespace TeklifPanelWebUI.Controllers
                 user.FirstName = userModel.FirstName;
                 user.LastName = userModel.LastName;
                 user.Email = userModel.Email;
+                user.IsOfferShow = userModel.IsOfferShow;
 
                 user.UserName = Jobs.MakeUserName(userModel.FirstName) + "-" + Jobs.MakeUserName(userModel.LastName);
 
@@ -148,5 +153,18 @@ namespace TeklifPanelWebUI.Controllers
             return RedirectToAction("UserList");
         }
 
+        public async Task<IActionResult> UserDetail(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+            UserModel userModel = new UserModel()
+            {
+                Id = id,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Email = user.Email,
+                IsOfferShow = user.IsOfferShow,
+            };
+            return View(userModel);
+        }
     }
 }

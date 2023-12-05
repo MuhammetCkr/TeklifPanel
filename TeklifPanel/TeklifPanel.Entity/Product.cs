@@ -26,5 +26,8 @@ namespace TeklifPanel.Entity
         public List<ProductOffer> ProductOffers { get; set; }
         public List<ProductImage> ProductImages { get; set; }
         public decimal? Discount { get; set; }
+        public string Unit { get; set; }
+        public string Currency { get; set; }
+        public byte[] QRCode { get; set; }
     }
 }

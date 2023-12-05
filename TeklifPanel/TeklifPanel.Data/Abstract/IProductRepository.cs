@@ -15,6 +15,7 @@ namespace TeklifPanel.Data.Abstract
         Task<Product> GetProductByIdAsync(int productId);
         Task<bool> DeleteProductAsync(int productId);
         Task<List<Product>> GetSearchProduct(int? companyId, string searchWord);
+        Task<Product> GetProductByUrlAsync(string url);
 
 
     }

@@ -1,0 +1,20 @@
+﻿@model Product
+
+<div class="product-detail">
+    <div class="pdetail-baslik">Ürün Kategorisi</div>
+    <div>@Model.Category?.Name</div>
+    <div class="pdetail-baslik">Ürün Adı</div>
+    <div>@Model.Name</div>
+    <div class="pdetail-baslik">Ürün Kodu</div>
+    <div>@Model.Code</div>
+    <div class="pdetail-baslik">Ürün Alış Fiyatı</div>
+    <div>@Model.SellPrice</div>
+    <div class="pdetail-baslik">Ürün Satış Fiyatı</div>
+    <div>@Model.BuyPrice</div>
+    <div class="pdetail-baslik">Ürün Stok</div>
+    <div>@Model.Stock</div>
+    <div class="pdetail-baslik">Birim</div>
+    <div>@Model.Unit</div>
+    <div class="pdetail-baslik">Para Birimi</div>
+    <div>@Model.Currency</div>
+</div>

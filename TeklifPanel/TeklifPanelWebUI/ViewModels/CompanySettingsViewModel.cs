@@ -16,6 +16,8 @@ namespace TeklifPanelWebUI.ViewModels
         public string PhoneNumber { get; set; }
         public string FaxNumber { get; set; }
         public string Address { get; set; }
+        public string Note { get; set; }
         public ICollection<Iban> Ibans { get; set; }
+        public List<OfferTable> OfferTables { get; set; }
     }
 }

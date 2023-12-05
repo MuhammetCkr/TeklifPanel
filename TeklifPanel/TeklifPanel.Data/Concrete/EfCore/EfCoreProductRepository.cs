@@ -43,9 +43,19 @@ namespace TeklifPanel.Data.Concrete.EfCore
         public async Task<Product> GetProductByIdAsync(int productId)
         {
             var product = await context.Products
-                .Where(p => p.Id == productId).
-                Include(p => p.ProductImages)
+                .Where(p => p.Id == productId)
+                .Include(p => p.ProductImages)
+                .Include(p => p.Category)
                 .FirstOrDefaultAsync();
+            return product;
+        }
+
+        public async Task<Product> GetProductByUrlAsync(string url)
+        {
+            var product =  await context.Products
+                .Where(p => p.Url == url)
+                .Include(p => p.ProductImages)
+                .SingleOrDefaultAsync();
             return product;
         }
 
@@ -63,7 +73,7 @@ namespace TeklifPanel.Data.Concrete.EfCore
             if (companyId != null)
             {
                 var productList = await context.Products
-                    .Where(p => p.CompanyId == companyId && p.IsActive == true && p.Name.Contains(searchWord))
+                    .Where(p => p.CompanyId == companyId && p.IsActive == true && (p.Name.Contains(searchWord) || p.Code.Contains(searchWord)))
                     .Include(p => p.ProductImages)
                     .Include(p => p.Category)
                     .Take(10)

@@ -1,0 +1,148 @@
+﻿<!--Dropzone UI-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.7.2/min/dropzone.min.js"></script>
+<!-- Dropzone -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.7.2/min/dropzone.min.css">
+
+<div class="table-title">
+    <h3>
+        Toplu Ürün Ekleme
+    </h3>
+</div>
+<div class="row">
+    <div class="col-xl-6 col-lg-6 col-md-12 col-12 mt-4">
+
+        <div class="yukleme-baslik">EXCEL YÜKLE</div>
+        <div class="yukleme-excel">
+            <form asp-controller="Product" asp-action="AddProductFromExcel" method="post" enctype="multipart/form-data" onsubmit="return form()">
+
+                <input id="excel" type="file" accept=".xlsx" name="excel" />
+                <button class="form-button" type="submit">YÜKLE</button>
+            </form>
+        </div>
+
+
+
+        <form method="post" enctype="multipart/form-data" action="#">
+            <div class="w-100">
+                <div class="main-card mb-3 card">
+                    <div class="card-body yukleme">
+                        <label for="Resimler" class="yukleme-baslik">RESİM YÜKLE</label>
+                        <div id="dZUpload" class="dropzone">
+                            <div class="dz-defaultdz-message"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class=text-end>
+                </div>
+            </div>
+
+        </form>
+
+       
+    </div>
+
+    <div class="col-xl-6 col-lg-6 col-md-12 col-12 mt-4">
+        <div class="yukleme-not">
+            <div class="yukleme-not-baslik">Excel Dosyası Oluşturulurken Dikkat Edilmesi Gerekenler</div>
+            <ul>
+
+                <li>
+                    <i class="fas fa-angle-double-right"></i>
+                    Toplu ürün eklemek için; Örnek excel tablosunu indirip formatı bozmadan verilerinizi örnekteki gibi doldurabilirsiniz.
+
+                </li>
+                <li>
+                    <i class="fas fa-angle-double-right"></i>
+                    Sütunların yerleri değiştirilmemelidir.
+                </li>
+                <li>
+                    <i class="fas fa-angle-double-right"></i>
+                    İki ürün arasında boş satır olmamalıdır.
+                </li>
+                <li>
+                    <i class="fas fa-angle-double-right"></i>
+                    Resimler sütununda, resimlerinizin isimleri uzantılarıyla birlikte boşluksuz yazılmalıdır. Örneğin; resim1.jpg
+                </li>
+                <li>
+                    <i class="fas fa-angle-double-right"></i>
+                    Fiyat değerlerinde küsürat ayırmak için virgül kullanınız. Örneğin; 1500,25
+                </li>
+            </ul>
+            <div class="ornek-excel">
+                <a class="form-control" href="/Content/excel/UrunEkle.xlsx" download>ÖRNEK EXCEL<i class="fas fa-long-arrow-alt-down"></i></a>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+    function form() {
+        let excelFile = $('#excel').val();
+        if (excelFile == '') {
+            Swal.fire(
+                'Dikkat',
+                'Lütfen bir excel dosyası seçiniz!',
+                'warning'
+            )
+            return false;
+        }
+        return true;
+    }
+</script>
+
+<script type="text/javascript">
+    Dropzone.autoDiscover = false;
+    var file_up_names = new Array;
+    $(document).ready(function () {
+
+
+        //SimpleDropzonejs
+        // $("#dZUpload").dropzone({
+        var myDropzone = new Dropzone("#dZUpload", { // Make the #my-awesome-dropzone a dropzone
+            url: "/Product/AddProductImageForm",
+            paramName: "images",
+            uploadMultiple: true,
+            parallelUploads: 1,
+            maxFiles: 100,
+            dictDefaultMessage: '<div class="yukleme-mesaj"><i class="fas fa-download"></i><p>Dosyayı bu alana sürükle <br /> veya <br/> Seçmek için tıkla</p></div>',
+            addRemoveLinks: true,
+            acceptedFiles: 'image/jpeg, image/jpg, image/png, image/webp',
+            maxFilesize: 10737418241073741824107374182410737418241073741824,
+            dictRemoveFile: 'Resmi kaldır',
+            success: function (file, response) {
+                console.log(response);
+                console.log(file);
+                var imgName = response;
+                file.previewElement.classList.add("dz-success");
+                file_up_names.push(imgName);
+            },
+            error: function (file, response) {
+                file.previewElement.classList.add("dz-error");
+            },
+            removedfile: function (file) {
+                x = confirm('Bu Resmi Silmek İstiyor Musunuz?');
+                if (!x) return false;
+                $.ajax({
+                    type: 'POST',
+                    url: '/Product/DeleteFile',
+                    data: "fileName=" + file.name,
+                    success: function (result) {
+                        if (result == 1) {
+                            myDropzone.options.maxFiles = myDropzone.options.maxFiles + 1;
+                            var _ref;
+                            return (_ref = file.previewElement) != null ? _ref.parentNode.removeChild(file.previewElement) : void 0;
+                        }
+                    }
+                });
+            }
+        });
+
+        $(".dz-image img").css("width", "120px");
+        $(".dz-image img").css("height", "120px");
+        $(".dz-image img").css("transform", "scale(1.55,1.2)");
+    });
+
+</script>

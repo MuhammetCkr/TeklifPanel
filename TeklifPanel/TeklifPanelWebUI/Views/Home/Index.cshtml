@@ -13,62 +13,117 @@
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 }
-
-<div class="dashboard container">
-
+<div class="dashboard container-fluid">
     <div class="row">
         <div class="col-lg-12 col-md-12 col-12">
-
             <div class="row">
-                <div class="col-lg-3 col-md-3 col-12">
-                    <div class="kutucuk" style="background-color: #26A69A;">
-                        <div class="kutucuk-sayi">
-                            @Model?.Offers.Count()
-                            <p>Gönderilmiş Teklif</p>
-                        </div>
-                        <div class="kutucuk-tarih">
-                            @DateTime.Now.ToShortDateString()
+                @if (Model.User.IsOfferShow)
+                {
+                    <div class="col-lg-3 col-md-3 col-12 diskutu">
+                        <div class="kutucuk" style="background-color: #26A69A;">
+                            <div class="kutucuk-sayi">
+                                @Model?.Offers.Where(o => o.UserId == Model.User.Id).Count()
+                                <p>Gönderilmiş Teklif</p>
+                            </div>
+                            <div class="kutucuk-tarih">
+                                @DateTime.Now.ToString("dd.MM.yyyy")
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="col-lg-3 col-md-3 col-12">
-                    <div class="kutucuk" style="background-color: #EC407A;">
-                        <div class="kutucuk-sayi">
-                            @Model?.CustomerList.Count()
-                            <p>Müşteri</p>
-                        </div>
-                        <div class="kutucuk-tarih">
-                            @DateTime.Now.ToShortDateString()
+                    <div class="col-lg-3 col-md-3 col-12 diskutu">
+                        <div class="kutucuk" style="background-color: #EC407A;">
+                            <div class="kutucuk-sayi">
+                                @Model?.CustomerList.Count()
+                                <p>Müşteri</p>
+                            </div>
+                            <div class="kutucuk-tarih">
+                                @DateTime.Now.ToString("dd.MM.yyyy")
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="col-lg-3 col-md-3 col-12">
-                    <div class="kutucuk" style="background-color: #FFA726;">
-                        <div class="kutucuk-sayi">
-                            @Model?.Offers.Select(o => o.TotalPrice).Sum() TL
-                            <p>Gönderilen Toplam Teklif Tutarı</p>
-                        </div>
-                        <div class="kutucuk-tarih">
-                            @DateTime.Now.ToShortDateString()
+                    <div class="col-lg-3 col-md-3 col-12 diskutu">
+                        <div class="kutucuk" style="background-color: #FFA726;">
+                            <div class="kutucuk-sayi">
+                                <div>₺ @Model?.TL.ToString("N",new System.Globalization.CultureInfo("tr-TR"))</div>
+                                <div>$ @Model?.USD.ToString("N",new System.Globalization.CultureInfo("tr-TR"))</div>
+                                <div>€ @Model?.EURO.ToString("N",new System.Globalization.CultureInfo("tr-TR"))</div>
+                                <div>£ @Model?.GBP.ToString("N",new System.Globalization.CultureInfo("tr-TR"))</div>
+                                <p>Gönderilen Toplam Teklif Tutarı</p>
+                            </div>
+                            <div class="kutucuk-tarih">
+                                @DateTime.Now.ToString("dd.MM.yyyy")
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="col-lg-3 col-md-3 col-12">
-                    <div class="kutucuk" style="background-color: #9CCC65;">
-                        <div class="kutucuk-sayi">
-                            14
-                            <p>Gönderilmiş Teklif</p>
-                        </div>
-                        <div class="kutucuk-tarih">
-                            @DateTime.Now.ToShortDateString()
+                    <div class="col-lg-3 col-md-3 col-12 diskutu">
+                        <div class="kutucuk" style="background-color: #9CCC65;">
+                            <div class="kutucuk-sayi">
+                                @Model.Offers.Where(o => o.IsApproved && o.UserId == Model.User.Id).Count()
+                                <p>Onaylanan Teklifler</p>
+                            </div>
+                            <div class="kutucuk-tarih">
+                                @DateTime.Now.ToString("dd.MM.yyyy")
+                            </div>
                         </div>
                     </div>
-                </div>
+                }
+                else
+                {
+                    <div class="col-lg-3 col-md-3 col-12 diskutu">
+                        <div class="kutucuk" style="background-color: #26A69A;">
+                            <div class="kutucuk-sayi">
+                                @Model?.Offers.Where(x => x.UserId == Model.User.Id).Count()
+                                <p>Gönderilmiş Teklif</p>
+                            </div>
+                            <div class="kutucuk-tarih">
+                                @DateTime.Now.ToString("dd.MM.yyyy")
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-3 col-md-3 col-12 diskutu">
+                        <div class="kutucuk" style="background-color: #EC407A;">
+                            <div class="kutucuk-sayi">
+                                @Model?.CustomerList.Count()
+                                <p>Müşteri</p>
+                            </div>
+                            <div class="kutucuk-tarih">
+                                @DateTime.Now.ToString("dd.MM.yyyy")
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-3 col-md-3 col-12 diskutu">
+                        <div class="kutucuk" style="background-color: #FFA726;">
+                            <div class="kutucuk-sayi">
+                                <div>₺ @Model?.TL.ToString("N",new System.Globalization.CultureInfo("tr-TR"))</div>
+                                <div>$ @Model?.USD.ToString("N",new System.Globalization.CultureInfo("tr-TR"))</div>
+                                <div>€ @Model?.EURO.ToString("N",new System.Globalization.CultureInfo("tr-TR"))</div>
+                                <div>£ @Model?.GBP.ToString("N",new System.Globalization.CultureInfo("tr-TR"))</div>
+                                <p>Gönderilen Toplam Teklif Tutarı</p>
+                            </div>
+                            <div class="kutucuk-tarih">
+                                @DateTime.Now.ToString("dd.MM.yyyy")
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-3 col-md-3 col-12 diskutu">
+                        <div class="kutucuk" style="background-color: #9CCC65;">
+                            <div class="kutucuk-sayi">
+                                @Model.Offers.Where(o => o.IsApproved && o.UserId == Model.User.Id).Count()
+                                <p>Onaylanan Teklifler</p>
+                            </div>
+                            <div class="kutucuk-tarih">
+                                @DateTime.Now.ToString("dd.MM.yyyy")
+                            </div>
+                        </div>
+                    </div>
+                }
             </div>
-
         </div>
 
         <div class="col-xl-8 col-lg-12 col-md-12 col-12 mt-4">
@@ -83,27 +138,49 @@
                             <th class="text-left">Yetkili</th>
                             <th class="text-left">Gönderici</th>
                             <th class="text-left">Gönderme Saati</th>
-                            <th class="text-left">İskonto</th>
-                            <th class="text-left">Toplam Tutar</th>
+                            @* <th class="text-left">İskonto</th> *@
+                            @* <th class="text-left">Toplam Tutar</th> *@
                             <th class="text-left">Görüntüle</th>
                         </tr>
                     </thead>
                     <tbody class="table-hover">
-                        @foreach (var offer in Model?.Offers.OrderByDescending(o => o.DateOfOffer).Take(10))
+                        @if (Model.User.IsOfferShow)
                         {
-                            <tr>
-                                <td class="text-left">@offer.Customer.Name</td>
-                                <td class="text-left">@offer.CustomerContact.Name</td>
-                                <td class="text-left">@offer.User.FirstName</td>
-                                <td class="text-left">@offer.DateOfOffer</td>
-                                <td class="text-left">@offer.Discount</td>
-                                <td class="text-left">@offer.TotalPrice</td>
-                                <td class="text-left">
-                                    <a href="@Jobs.PdfRoute@offer.CompanyId/@offer.Pdf" target="_blank">
-                                        <i class="fas fa-eye"></i>
-                                    </a>
-                                </td>
-                            </tr>
+                            foreach (var offer in Model?.Offers.OrderByDescending(o => o.DateOfOffer).Take(10))
+                            {
+                                <tr>
+                                    <td class="text-left">@offer.Customer.Name</td>
+                                    <td class="text-left">@offer.CustomerContact.Name</td>
+                                    <td class="text-left">@offer.User.FirstName</td>
+                                    <td class="text-left">@offer.DateOfOffer.ToString("dd.MM.yyyy HH:mm:ss")</td>
+                                    @* <td class="text-left">@offer.Discount</td> *@
+                                    @* <td class="text-left">₺@offer.TotalPrice.ToString("N2")</td> *@
+                                    <td class="text-left">
+                                        <a href="@Jobs.PdfRoute@offer.CompanyId/@offer.Pdf" target="_blank">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            foreach (var offer in Model?.Offers.Where(o => o.UserId == Model.User.Id).OrderByDescending(o => o.DateOfOffer).Take(10))
+                            {
+                                <tr>
+                                    <td class="text-left">@offer.Customer.Name</td>
+                                    <td class="text-left">@offer.CustomerContact.Name</td>
+                                    <td class="text-left">@offer.User.FirstName</td>
+                                    <td class="text-left">@offer.DateOfOffer.ToString("dd.MM.yyyy HH:mm:ss")</td>
+                                    @* <td class="text-left">@offer.Discount</td> *@
+                                    @* <td class="text-left">₺@offer.TotalPrice.ToString("N2")</td> *@
+                                    <td class="text-left">
+                                        <a href="@Jobs.PdfRoute@offer.CompanyId/@offer.Pdf" target="_blank">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
                         }
 
                     </tbody>
@@ -127,14 +204,12 @@
                         {
                             <tr>
                                 <td class="text-left">@log.UserEmail</td>
-                                <td class="text-left">@log.DateOfLogin</td>
+                                <td class="text-left">@log.DateOfLogin.ToString("dd.MM.yyyy HH:mm:ss")</td>
                             </tr>
                         }
-
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
-
 </div>

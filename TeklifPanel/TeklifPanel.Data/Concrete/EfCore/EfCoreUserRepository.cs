@@ -19,13 +19,19 @@ namespace TeklifPanel.Data.Concrete.EfCore
 
         public async Task<User> GetUserAsync(string userId)
         {
-            var user = await context.Users.Where(u => u.Id == userId).FirstOrDefaultAsync();
+            var user = await context.Users.Where(u => u.Id == userId).Include(u => u.Offers).FirstOrDefaultAsync();
             return user;
         }
 
         public Task GetUserDeleteAsync(string userId)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<List<User>> GetUsersByCompany(int companyId)
+        {
+            var userList = await context.Users.Where(u => u.CompanyId == companyId).Include(u => u.Offers).ToListAsync();
+            return userList;
         }
 
         //public async Task GetUserDeleteAsync(string userId)

@@ -9,6 +9,7 @@ namespace TeklifPanelWebUI.ViewModels
         public int TaxNumber { get; set; } // Vergi numarası
         public string TaxOffice { get; set; } // Vergi Dairesi
         public string Note { get; set; }
+        public string SpecialNote { get; set; }
         public string Phone { get; set; }
         public decimal? Discount { get; set; } // İskonto
         public int CompanyId { get; set; }
@@ -20,5 +21,6 @@ namespace TeklifPanelWebUI.ViewModels
         public List<string> Department { get; set; }
         public List<int> ContactId { get; set; }
         public List<CustomerContact> CustomerContacts { get; set; }
+        public Company Company { get; set; }
     }
 }

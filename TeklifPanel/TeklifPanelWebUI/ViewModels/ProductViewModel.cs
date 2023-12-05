@@ -22,6 +22,13 @@ namespace TeklifPanelWebUI.ViewModels
         public List<ProductOffer> ProductOffers { get; set; }
         public List<ProductImage> ProductImages { get; set; }
         public List<string> Images { get; set; }
+        public User User { get; set; }
         public int CompanyId { get; set; }
+        public string Unit { get; set; }
+        public string Currency { get; set; }
+        public List<decimal> OfferDisCount { get; set; }
+        public byte[] QRCode { get; set; }
+        public string Deadline { get; set; }
+
     }
 }

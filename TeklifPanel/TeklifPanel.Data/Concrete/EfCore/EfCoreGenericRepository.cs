@@ -56,7 +56,16 @@ namespace TeklifPanel.Data.Concrete.EfCore
 
         public async Task<TEntity> GetByIdAsync(int id)
         {
-            return await _dbContext.Set<TEntity>().FindAsync(id);
+            try
+            {
+
+                return await _dbContext.Set<TEntity>().FindAsync(id);
+            }
+            catch (Exception e)
+            {
+
+                throw;
+            }
         }
 
         public void Update(TEntity entity)
@@ -77,14 +86,14 @@ namespace TeklifPanel.Data.Concrete.EfCore
 
                 throw;
             }
-         
- 
+
+
         }
 
         public async Task<bool> UpdateAsync(TEntity entity)
         {
             _dbContext.Set<TEntity>().Update(entity);
-            var result = await _dbContext .SaveChangesAsync();
+            var result = await _dbContext.SaveChangesAsync();
             return result > 0 ? true : false;
 
         }

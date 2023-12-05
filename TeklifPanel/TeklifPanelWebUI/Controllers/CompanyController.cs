@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using TeklifPanel.Business.Abstract;
 using TeklifPanel.Core;
@@ -8,17 +9,20 @@ using TeklifPanelWebUI.ViewModels;
 
 namespace TeklifPanelWebUI.Controllers
 {
+    [Authorize]
     public class CompanyController : Controller
     {
         private readonly ICompanyService _companyService;
         private readonly ICompanySettingsService _companySettingsService;
         private readonly IIbanService _ibanService;
+        private readonly IOfferTableService _offerTableService;
 
-        public CompanyController(ICompanyService companyService, ICompanySettingsService companySettingsService, IIbanService ibanService)
+        public CompanyController(ICompanyService companyService, ICompanySettingsService companySettingsService, IIbanService ibanService, IOfferTableService offerTableService)
         {
             _companyService = companyService;
             _companySettingsService = companySettingsService;
             _ibanService = ibanService;
+            _offerTableService = offerTableService;
         }
 
         public IActionResult Index()
@@ -33,6 +37,7 @@ namespace TeklifPanelWebUI.Controllers
             {
                 var companySettings = await _companySettingsService.GetAllCompanySettingsAsync(companyId);
                 var ibans = await _ibanService.GetIbansByCompanyAsync(companyId);
+                var offerTables = await _offerTableService.GetManyAsync(o => o.CompanyId == companyId);
                 if (companySettings != null && ibans != null)
                 {
                     var company = await _companyService.GetByIdAsync(companyId);
@@ -50,6 +55,8 @@ namespace TeklifPanelWebUI.Controllers
                         PhoneNumber = companySettings.Where(c => c.Parameter == "TelNo")?.FirstOrDefault().Value,
                         FaxNumber = companySettings.Where(c => c.Parameter == "FaxNo")?.FirstOrDefault().Value,
                         Address = companySettings.Where(c => c.Parameter == "Adres")?.FirstOrDefault().Value,
+                        Note = companySettings.Where(c => c.Parameter == "Not")?.FirstOrDefault().Value,
+                        OfferTables = offerTables.ToList(),
                     };
                     if (ibans.Count() > 0)
                         model.Ibans = ibans;
@@ -65,12 +72,14 @@ namespace TeklifPanelWebUI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Settings(CompanySettingsViewModel settingsViewModel, IFormFile logo, IFormFile logo2, List<string> IbanTitle)
+        public async Task<IActionResult> Settings(CompanySettingsViewModel settingsViewModel, IFormFile logo, IFormFile logo2, List<string> IbanTitle, List<int> menuId, List<int> isShow)
         {
 
             var companyId = HttpContext.Session.GetInt32("CompanyId") ?? default;
             var company = await _companyService.GetCompanyByIdAsync(companyId);
             var companySettings = await _companySettingsService.GetAllCompanySettingsAsync(companyId);
+            var companyMenu = await _offerTableService.GetManyAsync(x => x.CompanyId == companyId);
+            var companyMenuList = companyMenu.ToList();
 
             var url = Jobs.MakeUrl(companyId + company.Name);
 
@@ -135,6 +144,24 @@ namespace TeklifPanelWebUI.Controllers
             companySettings.Where(c => c.Parameter == "TelNo").FirstOrDefault().Value = settingsViewModel?.PhoneNumber;
             companySettings.Where(c => c.Parameter == "FaxNo").FirstOrDefault().Value = settingsViewModel?.FaxNumber;
             companySettings.Where(c => c.Parameter == "Adres").FirstOrDefault().Value = settingsViewModel?.Address;
+            companySettings.Where(c => c.Parameter == "Not").FirstOrDefault().Value = settingsViewModel?.Note;
+
+            for (int i = 0; i < companyMenu.Count(); i++)
+            {
+                //companyMenuList[menuId[i] - 1].SiraNo = i;
+                //companyMenuList[i].SiraNo = menuId.Contains(companyMenuList[i].Id) ? i : default;
+                companyMenuList[i].IsShow = isShow.Contains(companyMenuList[i].Id) ? true : false;
+                await _offerTableService.UpdateAsync(companyMenuList[i]);
+            }
+
+            var index = 0;
+            foreach (var menuItem in menuId)
+            {
+                var r = companyMenuList.Where(x => x.Id == menuItem).FirstOrDefault();
+                r.SiraNo = index;
+                index++;
+                await _offerTableService.UpdateAsync(r);
+            }
 
             var result = await _companySettingsService.UpdateCompanySettingAsync(companySettings);
             if (result)

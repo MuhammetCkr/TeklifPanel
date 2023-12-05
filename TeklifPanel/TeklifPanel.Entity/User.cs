@@ -17,6 +17,7 @@ namespace TeklifPanel.Entity
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public int CompanyId { get; set; }
+        public bool IsOfferShow { get; set; }
         public Company Company { get; set; }
         public List<Offer> Offers { get; set; }
 

@@ -1,0 +1,8 @@
+﻿@model Customer
+@{
+    Layout = null;
+}
+@if (!String.IsNullOrWhiteSpace(Model.SpecialNote))
+{
+    <textarea class="form-control" rows="3">@Model.SpecialNote</textarea>
+}

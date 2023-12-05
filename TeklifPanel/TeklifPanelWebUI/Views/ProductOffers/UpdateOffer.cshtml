@@ -1,0 +1,481 @@
+﻿@model OfferViewModel
+
+<div class="d-flex" style="justify-content: space-between;">
+    <div class="span4">
+        <img src="@Jobs.ImageRoute@Model.Company.Id/@Model.CompanySettingsViewModel.Logo" class="mb-4">
+        <address>
+            <strong>@Model.Company.Name</strong><br>
+            <p class="mt-4">
+                @Model.CompanySettingsViewModel.Address
+            </p>
+        </address>
+    </div>
+    <div class="span4 well">
+
+        <div class="fatura-no mt-4">
+            <strong>Teklif No : </strong><span id="offerNumber">@Model.OfferNumber</span>
+        </div>
+        <div class="tarih mt-4">
+            <strong>Teklif Tarih : </strong>@DateTime.Now.ToShortDateString()
+        </div>
+    </div>
+</div>
+
+<hr class="my-4">
+
+<div class="musteri-bilgi">
+    <h5 class="musterifir">
+
+        @Model.Customer.Name
+
+    </h5>
+    <Strong>Sayın</Strong>
+    @if (Model.CustomerContact.Name == null)
+    {
+        <p>@Model.Customer.Name</p>
+    }
+    else
+    {
+        <p>@Model.CustomerContact.Name</p>
+    }
+    <p class="adres">
+        @Model.Customer.OpenAddress
+    </p>
+    <div class="v-daire">
+        <strong>Vergi Dairesi</strong><br>
+        @Model.Customer.TaxOffice
+    </div>
+</div>
+<div class="row">
+    <div class="span8">
+        <hr>
+    </div>
+</div>
+
+<div class="row">
+    <div class="span8 well invoice-body">
+
+        <table class="table table-bordered" id="myTable">
+            <thead>
+                <tr>
+                    @foreach (var menu in Model.OfferTables.Where(m => m.IsShow).OrderBy(m => m.SiraNo))
+                    {
+                        <th id="@menu.MenuName">@menu.MenuName</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var product in Model.ProductsViewModel)
+                {
+
+                    var id = product.Id;
+                    var productDiscount = product.Discount;
+                    var productSellPrice = product.SellPrice;
+                    var discountPrice = product.Amount * productSellPrice * ((100 - productDiscount) / 100);
+
+                    <input type="hidden" id="productCode-@product.Id" value="@product.Code" />
+                    <input type="hidden" id="productName-@product.Id" value="@product.Name" />
+                    <input type="hidden" id="productDetails-@product.Id" value="@product.Detail" />
+                    <input type="hidden" id="productAmount-@product.Id" value="@product.Amount" />
+                    <input type="hidden" id="productUnit-@product.Id" value="@product.Unit" />
+                    <input type="hidden" id="productKdv-@product.Id" value="%@product.KDV" />
+                    <input type="hidden" id="productSellPrice-@product.Id" value="@(product.Currency == "tl" ? "₺" : product.Currency == "usd" ? "$" : product.Currency == "eu" ? "€" : "£")@product.SellPrice?.ToString("N2")" />
+                    <input type="hidden" id="productDiscount-@product.Id" value="%@product.Discount" />
+                    <input type="hidden" id="productDiscountPrice-@product.Id" value="@(product.Currency == "tl" ? "₺" : product.Currency == "usd" ? "$" : product.Currency == "eu" ? "€" : "£")@discountPrice?.ToString("N2")" />
+                    <input type="hidden" id="productQRCode-@product.Id" value="@product.QRCode" />
+                    <input type="hidden" id="productDeadline-@product.Id" value="@product.Deadline" />
+
+                    <input type="hidden" class="productId" value="@product.Id" />
+                    <input type="hidden" class="productDiscount" value="@product.Discount" />
+                    <input type="hidden" class="productDeadline" value="@product.Deadline" />
+
+                    <tr>
+                        @foreach (var menu in Model.OfferTables.Where(m => m.IsShow).OrderBy(m => m.SiraNo))
+                        {
+                            <td class="ttr" id="td-@menu.Name-@product.Id">
+                                @if (menu.Name.Contains("productQRCode") && product.QRCode != null)
+                                {
+                                    <img width="10%" src="data:image/png;base64,@Convert.ToBase64String(product.QRCode)" alt="QR Code" />
+                                }
+                            </td>
+                        }
+                    </tr>
+                }
+                @if (Model.CurrencyType == "tl")
+                {
+                    <tr>
+                        <td colspan="5" class="jump"></td>
+                        <td class="td2"><strong>Toplam Fiyat</strong></td>
+                        <td id="totalPrice" class="td1"><strong></strong></td>
+                    </tr>
+                    <tr>
+                        <td colspan="5" class="jump"></td>
+                        <td class="td2"><strong>İskontolu Fiyat</strong></td>
+                        <td id="totalDiscount" class="td1"><strong></strong></td>
+                    </tr>
+                    <tr>
+                        <td colspan="5" class="jump"></td>
+                        <td class="td2"><strong>Toplam KDV</strong></td>
+                        <td id="totalKdv" class="td1"><strong></strong></td>
+                    </tr>
+                    <tr>
+                        <td colspan="5" class="jump"></td>
+                        <td class="td2"><strong>Genel Toplam</strong></td>
+                        <td id="total" class="td1"><strong></strong></td>
+                    </tr>
+                }
+                else
+                {
+                    if (Model.ProductsViewModel.Where(x => x.Currency == "tl").Count() > 0)
+                    {
+                        <tr>
+                            <td colspan="5" class="jump"></td>
+                            <td>TL Fiyat toplamları</td>
+                        </tr>
+                        <tr>
+                            <td colspan="5" class="jump"></td>
+                            <td class="td2"><strong>Toplam Fiyat</strong></td>
+                            <td id="totalPrice" class="td1"><strong></strong></td>
+                        </tr>
+                        <tr>
+                            <td colspan="5" class="jump"></td>
+                            <td class="td2"><strong>İskontolu Fiyat</strong></td>
+                            <td id="totalDiscount" class="td1"><strong></strong></td>
+                        </tr>
+                        <tr>
+                            <td colspan="5" class="jump"></td>
+                            <td class="td2"><strong>Toplam KDV</strong></td>
+                            <td id="totalKdv" class="td1"><strong></strong></td>
+                        </tr>
+                        <tr>
+                            <td colspan="5" class="jump"></td>
+                            <td class="td2"><strong>Genel Toplam</strong></td>
+                            <td id="total" class="td1"><strong></strong></td>
+                        </tr>
+                    }
+                    if (Model.ProductsViewModel.Where(x => x.Currency == "usd").Count() > 0)
+                    {
+                        <tr>
+                            <td colspan="5" class="jump"></td>
+                            <td>USD Fiyat toplamları</td>
+                        </tr>
+                        <tr>
+                            <td colspan="5" class="jump"></td>
+                            <td class="td2"><strong>Toplam Fiyat</strong></td>
+                            <td id="totalPriceUsd" class="td1"><strong></strong></td>
+                        </tr>
+                        <tr>
+                            <td colspan="5" class="jump"></td>
+                            <td class="td2"><strong>İskontolu Fiyat</strong></td>
+                            <td id="totalDiscountUsd" class="td1"><strong></strong></td>
+                        </tr>
+                        <tr>
+                            <td colspan="5" class="jump"></td>
+                            <td class="td2"><strong>Toplam KDV</strong></td>
+                            <td id="totalKdvUsd" class="td1"><strong></strong></td>
+                        </tr>
+                        <tr>
+                            <td colspan="5" class="jump"></td>
+                            <td class="td2"><strong>Genel Toplam</strong></td>
+                            <td id="totalUsd" class="td1"><strong></strong></td>
+                        </tr>
+                    }
+                    if (Model.ProductsViewModel.Where(x => x.Currency == "eu").Count() > 0)
+                    {
+                        <tr>
+                            <td colspan="5" class="jump"></td>
+                            <td>EURO Fiyat toplamları</td>
+                        </tr>
+                        <tr>
+                            <td colspan="5" class="jump"></td>
+                            <td class="td2"><strong>Toplam Fiyat</strong></td>
+                            <td id="totalPriceEu" class="td1"><strong></strong></td>
+                        </tr>
+                        <tr>
+                            <td colspan="5" class="jump"></td>
+                            <td class="td2"><strong>İskontolu Fiyat</strong></td>
+                            <td id="totalDiscountEu" class="td1"><strong></strong></td>
+                        </tr>
+                        <tr>
+                            <td colspan="5" class="jump"></td>
+                            <td class="td2"><strong>Toplam KDV</strong></td>
+                            <td id="totalKdvEu" class="td1"><strong></strong></td>
+                        </tr>
+                        <tr>
+                            <td colspan="5" class="jump"></td>
+                            <td class="td2"><strong>Genel Toplam</strong></td>
+                            <td id="totalEu" class="td1"><strong></strong></td>
+                        </tr>
+                    }
+                    if (Model.ProductsViewModel.Where(x => x.Currency == "gbp").Count() > 0)
+                    {
+                        <tr>
+                            <td colspan="5" class="jump"></td>
+                            <td>GBP Fiyat toplamları</td>
+                        </tr>
+                        <tr>
+                            <td colspan="5" class="jump"></td>
+                            <td class="td2"><strong>Toplam Fiyat</strong></td>
+                            <td id="totalPriceGbp" class="td1"><strong></strong></td>
+                        </tr>
+                        <tr>
+                            <td colspan="5" class="jump"></td>
+                            <td class="td2"><strong>İskontolu Fiyat</strong></td>
+                            <td id="totalDiscountGbp" class="td1"><strong></strong></td>
+                        </tr>
+                        <tr>
+                            <td colspan="5" class="jump"></td>
+                            <td class="td2"><strong>Toplam KDV</strong></td>
+                            <td id="totalKdvGbp" class="td1"><strong></strong></td>
+                        </tr>
+                        <tr>
+                            <td colspan="5" class="jump"></td>
+                            <td class="td2"><strong>Genel Toplam</strong></td>
+                            <td id="totalGbp" class="td1"><strong></strong></td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+        <script>
+            var tdList = document.getElementsByClassName("ttr");
+            for (i = 0; i < tdList.length; i++) {
+                console.log(tdList[i]);
+                var id = tdList[i].id.substring(3);
+                console.log(id);
+                if (!id.includes('productQRCode')) {
+                    tdList[i].innerText = document.getElementById(id).value;
+                }
+
+            }
+        </script>
+        <input type="hidden" id="discount" />
+    </div>
+</div>
+<div class="fatura-not">
+    <textarea class="form-control" id="editNote" name="Note" rows="3" i>@Model.CompanySettingsViewModel.Note</textarea>
+</div>
+
+<script>
+    var mdl = @Html.Raw(Json.Serialize(Model.ProductsViewModel));
+    var currencyType = @Html.Raw(Json.Serialize(Model.CurrencyType));
+    var currency = @Html.Raw(Json.Serialize(Model.Currency));
+
+    var totalPrice = 0;
+    var totalDiscount = 0;
+    var totalDiscountPrice = 0;
+    var totalKdv = 0;
+    var total = 0;
+
+    var totalPriceUsd = 0;
+    var totalDiscountUsd = 0;
+    var totalDiscountPriceUsd = 0;
+    var totalKdvUsd = 0;
+    var totalUsd = 0;
+
+    var totalPriceEu = 0;
+    var totalDiscountEu = 0;
+    var totalDiscountPriceEu = 0;
+    var totalKdvEu = 0;
+    var totalEu = 0;
+
+    var totalPriceGbp = 0;
+    var totalDiscountGbp = 0;
+    var totalDiscountPriceGbp = 0;
+    var totalKdvGbp = 0;
+    var totalGbp = 0;
+
+    for (let i = 0; i < mdl.length; i++) {
+        if (currencyType == 'doviz') {
+            if (mdl[i].currency == 'tl') {
+
+                let productId = mdl[i].id;
+
+                let kdvText = $('#td-productKdv-' + productId).text();
+                let replace_kdv = kdvText.substring(1).replace(/[.]/g, '').replace(',', '.');
+                let kdv = parseFloat(replace_kdv);
+                let sellPriceText = $('#td-productSellPrice-' + productId).text();
+                let replace_sellPrice = sellPriceText.substring(1).replace(/[.]/g, '').replace(',', '.');
+                let sellPrice = parseFloat(replace_sellPrice);
+
+                let discountText = $('#td-productDiscount-' + productId).text();
+                let replace_discount = discountText.substring(1).replace(/[.]/g, '').replace(',', '.');
+                let discount = parseFloat(replace_discount);
+
+                let amountText = $('#td-productAmount-' + productId).text();
+                let amount = parseFloat(amountText);
+
+                let discountPriceText = $('#td-productDiscountPrice-' + productId).text();
+                let replace_discountPriceText = discountPriceText.substring(1).replace(/[.]/g, '').replace(',', '.');
+                let discountPrice = parseFloat(replace_discountPriceText);
+
+                totalDiscount += discount;
+                totalPrice = totalPrice + (sellPrice * amount);
+                totalDiscountPrice += discountPrice;
+                totalKdv = (amount * sellPrice * (kdv / 100)) + totalKdv;
+                total = totalDiscountPrice + totalKdv;
+
+            } else if (mdl[i].currency == 'usd') {
+
+                let productId = mdl[i].id;
+
+                let kdvText = $('#td-productKdv-' + productId).text();
+                let replace_kdv = kdvText.substring(1).replace(/[.]/g, '').replace(',', '.');
+                let kdv = parseFloat(replace_kdv);
+                let sellPriceText = $('#td-productSellPrice-' + productId).text();
+                let replace_sellPrice = sellPriceText.substring(1).replace(/[.]/g, '').replace(',', '.');
+                let sellPrice = parseFloat(replace_sellPrice);
+
+                let discountText = $('#td-productDiscount-' + productId).text();
+                let replace_discount = discountText.substring(1).replace(/[.]/g, '').replace(',', '.');
+                let discount = parseFloat(replace_discount);
+
+                let amountText = $('#td-productAmount-' + productId).text();
+                let amount = parseFloat(amountText);
+
+                let discountPriceText = $('#td-productDiscountPrice-' + productId).text();
+                let replace_discountPriceText = discountPriceText.substring(1).replace(/[.]/g, '').replace(',', '.');
+                let discountPrice = parseFloat(replace_discountPriceText);
+
+                totalDiscountUsd += discount;
+                totalPriceUsd = totalPriceUsd + (sellPrice * amount);
+                totalDiscountPriceUsd += discountPrice;
+                totalKdvUsd = (amount * sellPrice * (kdv / 100)) + totalKdvUsd;
+                totalUsd = totalDiscountPriceUsd + totalKdvUsd;
+
+            } else if (mdl[i].currency == 'eu') {
+
+                let productId = mdl[i].id;
+
+                let kdvText = $('#td-productKdv-' + productId).text();
+                let replace_kdv = kdvText.substring(1).replace(/[.]/g, '').replace(',', '.');
+                let kdv = parseFloat(replace_kdv);
+                let sellPriceText = $('#td-productSellPrice-' + productId).text();
+                let replace_sellPrice = sellPriceText.substring(1).replace(/[.]/g, '').replace(',', '.');
+                let sellPrice = parseFloat(replace_sellPrice);
+
+                let discountText = $('#td-productDiscount-' + productId).text();
+                let replace_discount = discountText.substring(1).replace(/[.]/g, '').replace(',', '.');
+                let discount = parseFloat(replace_discount);
+
+                let amountText = $('#td-productAmount-' + productId).text();
+                let amount = parseFloat(amountText);
+
+                let discountPriceText = $('#td-productDiscountPrice-' + productId).text();
+                let replace_discountPriceText = discountPriceText.substring(1).replace(/[.]/g, '').replace(',', '.');
+                let discountPrice = parseFloat(replace_discountPriceText);
+
+                totalDiscountEu += discount;
+                totalPriceEu = totalPriceEu + (sellPrice * amount);
+                totalDiscountPriceEu += discountPrice;
+                totalKdvEu = (amount * sellPrice * (kdv / 100)) + totalKdvEu;
+                totalEu = totalDiscountPriceEu + totalKdvEu;
+
+            } else if (mdl[i].currency == 'gbp') {
+
+                let productId = mdl[i].id;
+
+                let kdvText = $('#td-productKdv-' + productId).text();
+                let replace_kdv = kdvText.substring(1).replace(/[.]/g, '').replace(',', '.');
+                let kdv = parseFloat(replace_kdv);
+                let sellPriceText = $('#td-productSellPrice-' + productId).text();
+                let replace_sellPrice = sellPriceText.substring(1).replace(/[.]/g, '').replace(',', '.');
+                let sellPrice = parseFloat(replace_sellPrice);
+
+                let discountText = $('#td-productDiscount-' + productId).text();
+                let replace_discount = discountText.substring(1).replace(/[.]/g, '').replace(',', '.');
+                let discount = parseFloat(replace_discount);
+
+                let amountText = $('#td-productAmount-' + productId).text();
+                let amount = parseFloat(amountText);
+
+                let discountPriceText = $('#td-productDiscountPrice-' + productId).text();
+                let replace_discountPriceText = discountPriceText.substring(1).replace(/[.]/g, '').replace(',', '.');
+                let discountPrice = parseFloat(replace_discountPriceText);
+
+                totalDiscountGbp += discount;
+                totalPriceGbp = totalPriceGbp + (sellPrice * amount);
+                totalDiscountPriceGbp += discountPrice;
+                totalKdvGbp = (amount * sellPrice * (kdv / 100)) + totalKdvGbp;
+                totalGbp = totalDiscountPriceGbp + totalKdvGbp;
+
+            }
+        } else {
+
+            let productId = mdl[i].id;
+
+            let kdvText = $('#td-productKdv-' + productId).text();
+            let replace_kdv = kdvText.substring(1).replace(/[.]/g, '').replace(',', '.');
+            let kdv = parseFloat(replace_kdv);
+            let sellPriceText = $('#td-productSellPrice-' + productId).text();
+            let replace_sellPrice = sellPriceText.substring(1).replace(/[.]/g, '').replace(',', '.');
+            let sellPrice = parseFloat(replace_sellPrice);
+
+            let discountText = $('#td-productDiscount-' + productId).text();
+            let replace_discount = discountText.substring(1).replace(/[.]/g, '').replace(',', '.');
+            let discount = parseFloat(replace_discount);
+
+            let amountText = $('#td-productAmount-' + productId).text();
+            let amount = parseFloat(amountText);
+
+            let discountPriceText = $('#td-productDiscountPrice-' + productId).text();
+            let replace_discountPriceText = discountPriceText.substring(1).replace(/[.]/g, '').replace(',', '.');
+            let discountPrice = parseFloat(replace_discountPriceText);
+
+            totalDiscount += discount;
+            totalPrice = totalPrice + (sellPrice * amount);
+            totalDiscountPrice += discountPrice;
+            totalKdv = (amount * sellPrice * (kdv / 100)) + totalKdv;
+            total = totalDiscountPrice + totalKdv;
+
+        }
+    }
+
+    var table = document.getElementById("myTable")
+    var jumpElements = document.querySelectorAll(".jump");
+    for (var i = 0; i < jumpElements.length; i++) {
+        var rowCount = table.rows[0].cells.length;
+        jumpElements[i].setAttribute("colspan", rowCount - 2);
+    }
+
+    $('#totalPrice').text('₺' + (totalPrice.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })));
+    $('#totalDiscount').text('₺' + (totalDiscountPrice.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })));
+    $('#totalKdv').text('₺' + (totalKdv.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })));
+    $('#total').text('₺' + (total.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })));
+
+    // USD
+    $('#totalPriceUsd').text('$' + (totalPriceUsd.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })));
+    $('#totalDiscountUsd').text('$' + (totalDiscountPriceUsd.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })));
+    $('#totalKdvUsd').text('$' + (totalKdvUsd.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })));
+    $('#totalUsd').text('$' + (totalUsd.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })));
+
+    // Euro (EUR)
+    $('#totalPriceEu').text('€' + (totalPriceEu.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })));
+    $('#totalDiscountEu').text('€' + (totalDiscountPriceEu.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })));
+    $('#totalKdvEu').text('€' + (totalKdvEu.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })));
+    $('#totalEu').text('€' + (totalEu.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })));
+
+    // British Pound (GBP)
+    $('#totalPriceGbp').text('£' + (totalPriceGbp.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })));
+    $('#totalDiscountGbp').text('£' + (totalDiscountPriceGbp.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })));
+    $('#totalKdvGbp').text('£' + (totalKdvGbp.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })));
+    $('#totalGbp').text('£' + (totalGbp.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })));
+
+
+    $('#discount').val(totalDiscount.toFixed(2));
+
+</script>
+
+
+<script>
+    // Önce textarea elementini seçiyoruz
+    let textarea = $('#editNote');
+
+    // textarea içeriğinde değişiklik olduğunda bu olayı dinliyoruz
+    textarea.on('input', function () {
+        // textarea içeriğini editNote değişkenine atıyoruz
+        let editNote = textarea.val();
+        $('#editNote').text(editNote);
+        console.log(editNote); // Güncel editNote'i konsola yazdırabilirsiniz
+    });
+</script>

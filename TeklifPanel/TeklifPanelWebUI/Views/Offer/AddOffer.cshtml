@@ -1,6 +1,9 @@
 ﻿@model List<Customer>
+
 @{
     int page = 0;
+    var result = ViewBag.ProductOffer as OfferViewModel;
+
 }
 
 <div class="container-fluid">
@@ -21,7 +24,6 @@
 
             <fieldset>
                 <div class="form-card">
-
                     <div class="row">
                         <div class="col-7 mt-3">
                             <h2 class="fs-title">Müşteriler:</h2>
@@ -35,19 +37,120 @@
                         <option>Seçiniz</option>
                         @foreach (var customer in Model)
                         {
-                            <option value="@customer.Id">@customer.Name</option>
+                            if (result != null && result.Customer.Id == customer.Id)
+                            {
+                                <option value="@customer.Id" selected>@customer.Name</option>
+                            }
+                            else
+                            {
+                                <option value="@customer.Id">@customer.Name</option>
+                            }
                         }
                     </select>
                     <div id="contactPersonList">
                         <label for="contactPersons" class="fieldlabels">Yetkiliyi Seçin:</label>
                         <select id="contactPersons">
                             <option>Seçiniz</option>
+                            @if (result != null)
+                            {
+                                foreach (var person in result.Customer.CustomerContacts)
+                                {
+                                    if (person.Id == result.CustomerContact.Id)
+                                    {
+                                        <option value="@person.Id" selected>@person.Name</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@person.Id">@person.Name</option>
+                                    }
+                                }
+                            }
                             @* PartialView ContackPerson *@
                         </select>
                     </div>
-                </div>
+                    <label class="fieldlabels">Döviz Seçin:</label>
+                    <select id="currencyType" onchange="getCurrency()" name="currencyType">
+                        <option>Seçiniz</option>
+                        @if (result == null)
+                        {
+                            <option value="tl">Türk Lirası</option>
+                            <option value="doviz">Döviz</option>
 
-                <input type="button" id="customerSelected" name="next" class="next action-button" value="İLERİ" disabled />
+                        }
+                        else
+                        {
+                            if (result.CurrencyType == "tl")
+                            {
+                                <option value="tl" selected>Türk Lirası</option>
+                                <option value="doviz">Döviz</option>
+
+                            }
+                            else
+                            {
+                                <option value="tl">Türk Lirası</option>
+                                <option value="doviz" selected>Döviz</option>
+                            }
+                        }
+                    </select>
+                    <div id="currencyList" style="@(result != null && result.CurrencyType == "tl" ? "display:block"  : "display:none" )">
+                        <label class="fieldlabels">Döviz Türünü Seçin:</label>
+                        <select id="currency" name="currency">
+                            <option>Seçiniz</option>
+                            @if (result == null)
+                            {
+                                <option value="FS">Forex Selling</option>
+                                <option value="FB">Forex Buying</option>
+                                <option value="BS">Banknote  Selling</option>
+                                <option value="BB">Banknote  Buying</option>
+                            }
+                            else
+                            {
+                                if (result.Currency == "FS")
+                                {
+                                    <option value="FS" selected>Forex Selling</option>
+                                    <option value="FB">Forex Buying</option>
+                                    <option value="BS">Banknote  Selling</option>
+                                    <option value="BB">Banknote  Buying</option>
+                                }
+                                else if (result.Currency == "FB")
+                                {
+                                    <option value="FS">Forex Selling</option>
+                                    <option value="FB" selected>Forex Buying</option>
+                                    <option value="BS">Banknote  Selling</option>
+                                    <option value="BB">Banknote  Buying</option>
+                                }
+                                else if (result.Currency == "BS")
+                                {
+                                    <option value="FS">Forex Selling</option>
+                                    <option value="FB">Forex Buying</option>
+                                    <option value="BS" selected>Banknote  Selling</option>
+                                    <option value="BB">Banknote  Buying</option>
+                                }
+                                else
+                                {
+                                    <option value="FS">Forex Selling</option>
+                                    <option value="FB">Forex Buying</option>
+                                    <option value="BS">Banknote  Selling</option>
+                                    <option value="BB" selected>Banknote  Buying</option>
+                                }
+                            }
+
+                        </select>
+                    </div>
+                </div>
+                <div id="ccPerson" class="row">
+                    <div class="form-row row ">
+                        @*Burası JavaScript ile ekleniyor*@
+                    </div>
+                </div>
+                <div class="yetkiliekle">
+                    <p>CC Ekle</p>
+                    <i id="addCc" class="fas fa-plus" style="cursor:pointer"></i>
+                </div>
+                <div class="form-group" id="specialNote">
+                    @*PartialView - SpecialNote*@
+                </div>
+                <input type="button" id="customerSelected" name="next" class="next action-button cursor-no-drop " value="İLERİ" @(result == null ? "disabled" : "") style="cursor:@(result == null ? "no-drop;" : "auto")" />
 
             </fieldset>
 
@@ -64,21 +167,28 @@
                             <h2 class="steps">Adım 2 - 4</h2>
                         </div>
                     </div>
-                        <div>
-                            <input name="search" id="searchVal" class="form-control mb-2" type="search" placeholder="Enter search word" aria-label="Search" onkeyup="search()">
-                        </div>
-                        <div>
-                            <label for="categoryId" class="fieldlabels">Kategori Seçin:</label>
-                            <select id="categoryId" onchange="getCategories()">
-                                <option>Seçiniz</option>
-                                @foreach (var category in (List<Category>)ViewBag.Categories)
-                                {
-                                    <option value="@category.Id">@category.Name</option>
-                                }
-                            </select>
+                    <div>
+                        <input name="search" id="searchVal" class="form-control mb-2" type="search" placeholder="Aramak istediğiniz ürün kodunu ya da ismini yazınız." aria-label="Search" onkeyup="search()">
+                    </div>
+                    <div>
+                        <label for="categoryId" class="fieldlabels ">Kategori Seçin:</label>
+                        <select id="categoryId" onclick="getCategoriesNormal()" class="normal-tablo">
+                            <option>Seçiniz</option>
+                            @foreach (var category in (List<Category>)ViewBag.Categories)
+                            {
+                                <option value="@category.Id">@category.Name</option>
+                            }
+                        </select>
+                        <select id="categoryIdMobile" onclick="getCategoriesMobile()" class="mobile-tablo">
+                            <option>Seçiniz</option>
+                            @foreach (var category in (List<Category>)ViewBag.Categories)
+                            {
+                                <option value="@category.Id">@category.Name</option>
+                            }
+                        </select>
                         <div class="row">
                             <div class="col-xl-8 col-lg-12 col-md-12 col-12 table-responsive">
-                                <table class="table-fill">
+                                <table class="table-fill normal-tablo">
                                     <thead>
                                         <tr>
                                             <th class="text-center">Kategori</th>
@@ -95,21 +205,81 @@
                                         @* PartialView - GetProducts *@
                                         @*PartialView - SearchProduct*@
                                     </tbody>
-                                </table>
 
+                                </table>
+                                <table class="table-fill mobile-tablo">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-center">Kategori</th>
+                                            <th class="text-center">Ürün Adı</th>
+                                            <th class="text-center">Kod</th>
+                                            <th class="text-center">Fiyat</th>
+                                            <th class="text-center">İskonto</th>
+                                            <th class="text-center">Ekle</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="table-hover" id="productListMobile">
+                                        @* PartialView - GetProducts *@
+                                        @*PartialView - SearchProduct*@
+                                    </tbody>
+                                </table>
                             </div>
                             <div class="col-xl-4 col-lg-12 col-md-12 col-12">
                                 <form asp-controller="Offer" asp-action="OfferPreview" method="post" id="seletectedProductsForm">
-                                    <div id="selectedProducts">
+                                    <div id="selectedProducts" class="normal-tablo">
+                                        @if (result != null)
+                                        {
+                                            foreach (var selectedProduct in result.ProductsViewModel)
+                                            {
+                                                <div class="selectedDiv" id="selectedDiv-@selectedProduct.Id" style="font-size: 15px;">
+                                                    <input type="hidden" value="@selectedProduct.Id" name="Id" />
+                                                    <input type="hidden" value="@result.Customer.Id" name="CustomerId" />
+                                                    <input type="hidden" value="@result.CustomerContact.Id" name="ContactPersonId" />
+                                                    @*                                                     <input type="hidden" value="@result.CurrencyType" name="currencyType" />
+                                            <input type="hidden" value="@selectedProduct.Currency" name="currency" /> *@
+                                                    <div class="form-row row">
+                                                        <div class="form-group col-lg-5 col-md-5 col-12">
+                                                            <label> <b>Ürün Kategori </b></label>
+                                                            <label class="selectedDivItem-@selectedProduct.Id">@selectedProduct.CategoryName</label>
+                                                        </div>
+                                                        <div class="form-group col-lg-5 col-md-5 col-12">
+                                                            <label> <b>Ürün Adı </b></label><br />
+                                                            <label class="selectedDivItem-@selectedProduct.Id">@selectedProduct.Name</label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-row row">
+                                                        <div class="form-group col-lg-3 col-md-5 col-12">
+                                                            <label for="inputName"> <b>Adet </b></label>
+                                                            <input type="number" id="Amount" class="form-control amounts" name="Amount" placeholder="Adet" value="@selectedProduct.Amount" />
+                                                        </div>
+                                                        <div class="form-group col-lg-3 col-md-5 col-12">
+                                                            <label> <b>İskonto</b></label>
+                                                            <input type="text" id="Discount" class="form-control" name="Discount" placeholder="İskonto" value="@selectedProduct.Discount" />
+                                                        </div>
+                                                        <div class="form-group col-lg-3 col-md-5 col-12">
+                                                            <label> <b>Termin Süresi</b></label>
+                                                            <input type="text" id="Deadline" class="form-control" name="Deadline" placeholder="Termin süresi" />
+                                                        </div>
+                                                        <div class="form-group col-lg-2 col-md-1 col-12">
+                                                            <button class=" btn btn-danger  remove-contact" onclick="removeDiv(@selectedProduct.Id)">Sil</button>
+                                                        </div>
+                                                    </div>
+                                                    <hr />
+                                                </div>
+                                            }
+                                        }
+
+                                    </div>
+                                    <div id="selectedProductsMobile" class="mobile-tablo">
                                     </div>
                                 </form>
                             </div>
                         </div>
-                        </div>
-                        
+                    </div>
+
                 </div>
 
-                <input type="button" id="selectedProductButton" name="next" class="next action-button" value="İLERİ" onclick="sendSelectedProducts()" disabled />
+                <input type="button" id="selectedProductButton" name="next" class="next action-button" value="İLERİ" onclick="sendSelectedProducts()" @(result == null ? "disabled" : "") style="cursor:@(result == null ? "no-drop;" : "auto")" />
                 <input type="button" name="previous" class="previous action-button-previous" value="GERİ" />
 
             </fieldset>
@@ -126,6 +296,10 @@
                         </div>
                     </div>
                     <form asp-controller="Offer" asp-action="SendMail" method="post" id="sendMailForm" enctype="multipart/form-data">
+                        <div>
+                            <label>Mail içeriği</label>
+                            <textarea class="form-control" id="mailBody" rows="3"></textarea>
+                        </div>
                         <div class="container mt-5" id="productPreview">
                         </div>
                     </form>
@@ -133,6 +307,7 @@
                 </div>
 
                 <input type="button" name="next" class="next action-button" value="GÖNDER" onclick="captureDivToPdfAndPost()" />
+                <input type="button" name="next" class="action-button" value="KAYDET" onclick="saveOffer()" />
                 <input type="button" name="previous" class="previous action-button-previous" value="GERİ" />
 
             </fieldset>
@@ -202,19 +377,55 @@
     }
 </script>
 
+@* CC Ekle *@
+<script>
+    document.getElementById("addCc").addEventListener('click', function () {
+        var ccPerson = document.getElementById("ccPerson");
+        var ccHtml = `<div class="contact-entry mb-4">
+                        <div style="text-align: start;">
+                            <label for="inputName" class="fieldlabels">CC Emaili</label>
+                        </div>
+                        <div class="form-row row">
+                            <div class="form-group col-lg-5 col-md-5 col-12">
+                                <input type="email" class="form-control ccPerson" id="ccEmail" name="CcEmail" placeholder="CC Email" required>
+                            </div>
+                            <div class="form-group col-lg-1 col-md-1 col-12">
+                                <button class=" btn btn-danger  remove-contact" style="padding: 10px 15px;">Sil</button>
+                            </div>
+                        </div>
+                    <hr />
+                    </div>`;
+        ccPerson.insertAdjacentHTML('beforeend', ccHtml);
+
+    });
+    //CcPerson Silme
+    document.getElementById('ccPerson').addEventListener('click', function (e) {
+        if (e.target.classList.contains('remove-contact')) {
+            e.target.closest('.contact-entry').remove();
+        }
+    });
+</script>
+
 @*Arama*@
 <script>
     function search() {
         let searchVal = $('#searchVal').val();
         let selectedCustomerId = $('#customerId').val();
+        let currencyType = $("#currencyType").val();
+        let currency = $("#currency").val();
 
         console.log(searchVal);
         $.ajax({
             url: '/Offer/Search?customerId=' + selectedCustomerId,
             type: 'GET',
-            data: { searchWord: searchVal },
+            data: {
+                searchWord: searchVal,
+                customerId: selectedCustomerId,
+                currencyType: currencyType,
+                currency: currency
+            },
             success: function (result) {
-                $("#productList").html(result);
+                $(".productList").html(result);
                 let list = $('.temp');
                 for (let i = 0; i < list.length; i++) {
                     let id = list[i].value;
@@ -237,6 +448,48 @@
         let selectedContactPersons = $("#contactPersons").val();
         let total = $("#total").text();
         let discount = $("#discount").val();
+        let editNote = $('#editNote').text();
+        let mailBody = $('#mailBody').text();
+        let currencyType = $("#currencyType").val();
+        let currency = $("#currency").val();
+
+
+        let amounts = [];
+        let amount = document.getElementsByClassName("amounts");
+
+        for (let i = 0; i < amount.length; i++) {
+            amounts.push(amount[i].value);
+        }
+
+        let ProductId = [];
+        let productId = document.getElementsByClassName("productId");
+
+        for (let i = 0; i < productId.length; i++) {
+            ProductId.push(productId[i].value);
+        }
+
+        let ProductDiscount = [];
+        let productDiscount = document.getElementsByClassName("productDiscount");
+
+        for (let i = 0; i < productDiscount.length; i++) {
+            ProductDiscount.push(productDiscount[i].value.replace(',', '.'));
+        }
+
+        let productDeadline = [];
+        let productDeadlines = document.getElementsByClassName("productDeadline");
+
+        for (let i = 0; i < productDeadlines.length; i++) {
+            productDeadline.push(productDeadlines[i].value);
+            console.log(productDeadlines[i].value);
+        }
+        console.log(productDeadline);
+
+        let CcEmail = [];
+        let ccEmail = document.querySelectorAll(".ccPerson");
+
+        for (let i = 0; i < ccEmail.length; i++) {
+            CcEmail.push(ccEmail[i].value);
+        }
 
         // Div'i yakalayın
         var divToCapture = document.getElementById('productPreview');
@@ -264,7 +517,7 @@
             // POST isteğini oluşturun
             var xhr = new XMLHttpRequest();
             //xhr.open('POST', '/Offer/SendMail?CustomerId=' + selectedCustomerId + "&OrderNumber=" + orderNumber, true);
-            xhr.open('POST', `/Offer/SendMail?CustomerId=${selectedCustomerId}&OfferNumber=${offerNumber}&ContactPersonId=${selectedContactPersons}&Total=${total}&Discount=${discount}`, true);
+            xhr.open('POST', `/Offer/SendMail?CustomerId=${selectedCustomerId}&OfferNumber=${offerNumber}&ContactPersonId=${selectedContactPersons}&Total=${total}&Discount=${discount}&EditNote=${editNote}&CcEmail=${CcEmail}&ProductIds=${ProductId}&ProductDiscount=${ProductDiscount}&MailBody=${mailBody}&Deadline=${productDeadline}&Amounts=${amounts}&CurrencyType=${currencyType}&Currency=${currency}`, true);
 
             // İsteği gönderin
             xhr.send(formData);
@@ -287,6 +540,124 @@
 
 </script>
 
+@*Teklif Kaydetme*@
+<script>
+    function saveOffer() {
+
+        let selectedCustomerId = $('#customerId').val();
+        let offerNumber = $('#offerNumber').text();
+        let selectedContactPersons = $("#contactPersons").val();
+        let total = $("#total").text();
+        let discount = $("#discount").val();
+        let editNote = $('#editNote').text();
+        let mailBody = $('#mailBody').text();
+        let currencyType = $("#currencyType").val();
+        let currency = $("#currency").val();
+
+        let amounts = [];
+        let amount = document.getElementsByClassName("amounts");
+
+        for (let i = 0; i < amount.length; i++) {
+            amounts.push(amount[i].value);
+        }
+
+        let ProductId = [];
+        let productId = document.getElementsByClassName("productId");
+
+        for (let i = 0; i < productId.length; i++) {
+            ProductId.push(productId[i].value);
+        }
+
+        let ProductDiscount = [];
+        let productDiscount = document.getElementsByClassName("productDiscount");
+
+        for (let i = 0; i < productDiscount.length; i++) {
+            ProductDiscount.push(productDiscount[i].value.replace(',', '.'));
+        }
+
+        let productDeadline = [];
+        let productDeadlines = document.getElementsByClassName("productDeadline");
+
+        for (let i = 0; i < productDeadlines.length; i++) {
+            productDeadline.push(productDeadlines[i].value);
+            console.log(productDeadlines[i].value);
+        }
+        console.log(productDeadline);
+
+        let CcEmail = [];
+        let ccEmail = document.querySelectorAll(".ccPerson");
+
+        for (let i = 0; i < ccEmail.length; i++) {
+            CcEmail.push(ccEmail[i].value);
+        }
+
+        // Div'i yakalayın
+        var divToCapture = document.getElementById('productPreview');
+
+        // Div'i bir canvas'a dönüştürün
+        html2canvas(divToCapture).then(function (canvas) {
+            // Canvas'tan bir veri URL'si alın
+            var dataUrl = canvas.toDataURL();
+
+            // Veri URL'sini bir Blob'a dönüştürün
+            var blob = dataURLToBlob(dataUrl);
+
+            // Blob'u bir dosya olarak tanımlayın
+            var file = new File([blob], 'preview.png', { type: 'application/png' });
+
+            // FormData nesnesini oluşturun
+            var formData = new FormData();
+
+            // PDF dosyasını FormData'ya ekleyin
+            formData.append('pdfFile', file);
+
+            // POST isteğini oluşturun
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', `/Offer/SaveOffer?CustomerId=${selectedCustomerId}&OfferNumber=${offerNumber}&ContactPersonId=${selectedContactPersons}&Total=${total}&Discount=${discount}&EditNote=${editNote}&CcEmail=${CcEmail}&ProductIds=${ProductId}&ProductDiscount=${ProductDiscount}&MailBody=${mailBody}&Deadline=${productDeadline}&Amounts=${amounts}&CurrencyType=${currencyType}&Currency=${currency}`, true);
+
+            // İsteği gönderin
+            xhr.send(formData);
+
+            xhr.onload = function () {
+                if (xhr.status === 200) { // Başarılı bir yanıt durumunu kontrol edin
+                    // XHR isteği başarılı olduğunda istenen sayfaya yönlendirin
+                    window.location.href = "/Offer/OfferList";
+                } else {
+                    // İstek başarılı değilse hata mesajını kaydedin
+                    console.log('İstek, durum ' + xhr.status + ' ile başarısız oldu.');
+                }
+            };
+        });
+    }
+
+    function dataURLToBlob(dataUrl) {
+        var arr = dataUrl.split(','),
+            mime = arr[0].match(/:(.*?);/)[1],
+            bstr = atob(arr[1]),
+            n = bstr.length,
+            u8arr = new Uint8Array(n);
+
+        while (n--) {
+            u8arr[n] = bstr.charCodeAt(n);
+        }
+
+        return new Blob([u8arr], { type: mime });
+    }
+
+</script>
+
+@* Doviz Tiplerini getirme *@
+<script>
+    function getCurrency() {
+        let currencyType = $("#currencyType").val();
+        if (currencyType == "tl") {
+            $('#currencyList').css('display', 'block');
+        } else {
+            $('#currencyList').css('display', 'none');
+
+        }
+    }
+</script>
 
 @*Müşterilerin İletişim kişilerini getirme*@
 <script>
@@ -294,41 +665,87 @@
     function getContactPersonList() {
         let customerId = $("#customerId").val();
         let customerSelectedButton = document.getElementById("customerSelected");
+        customerSelectedButton.style.cursor = "pointer";
+
         $.ajax({
             type: "GET",
-            url: "/Offer/ContactPersons?id=" + customerId,
+            url: "/Offer/ContactPersons?customerId=" + customerId,
             success: function (data) {
                 $("#contactPersonList").html(data);
+                $.ajax({
+                    type: 'GET',
+                    url: '/Offer/SpecialNote?customerId=' + customerId,
+                    success: function (result) {
+                        $("#specialNote").html(result);
+
+                    }
+                })
             }
         });
         if (customerId !== "Seçiniz") {
             customerSelectedButton.disabled = false;
         } else {
+            customerSelectedButton.style.cursor = "no-drop";
             customerSelectedButton.disabled = true;
-            alert('Lütfen bir Müsteri Seçiniz!');
         }
     }
 </script>
 
 @*Seçilen kategoriye göre gelecek ürünler*@
 <script>
-    function getCategories() {
+    function getCategoriesNormal() {
         let categoryId = $("#categoryId").val();
         let selectedCustomerId = $('#customerId').val();
+        let currencyType = $("#currencyType").val();
+        let currency = $("#currency").val();
 
         $.ajax({
             type: "GET",
-            url: "/Offer/GetProducts?categoryId=" + categoryId,
+            url: "/Offer/GetProducts",
             data: {
+                categoryId: categoryId,
                 customerId: selectedCustomerId,
+                currencyType: currencyType,
+                currency: currency
             },
             success: function (result) {
                 $("#productList").html(result);
                 let list = $('.temp');
                 for (let i = 0; i < list.length; i++) {
                     let id = list[i].value;
-                    if (document.getElementById('selectedDiv' + id) != undefined) {
-                        $("#seletedItem" + id)[0].checked = true;
+                    if (document.getElementById('selectedDiv-' + id) != undefined) {
+                        $(".seletedItem" + id)[3].checked = true;
+                    }
+                }
+            }
+        });
+    }
+</script>
+
+@*Seçilen kategoriye göre gelecek ürünler Mobil*@
+<script>
+    function getCategoriesMobile() {
+        let categoryId = $("#categoryIdMobile").val();
+        let selectedCustomerId = $('#customerId').val();
+        let currencyType = $("#currencyType").val();
+        let currency = $("#currency").val();
+
+        $.ajax({
+            type: "GET",
+            url: "/Offer/GetProductsMobil",
+            data: {
+                categoryId: categoryId,
+                customerId: selectedCustomerId,
+                currencyType: currencyType,
+                currency: currency
+            },
+            success: function (result) {
+                $("#productListMobile").html(result);
+                let list = $('.temp');
+                for (let i = 0; i < list.length; i++) {
+                    let id = list[i].value;
+                    if (document.getElementById('selectedDivMobile-' + id) != undefined) {
+                        $(".seletedItemMobile" + id)[3].checked = true;
                     }
                 }
             }
@@ -340,10 +757,18 @@
 <script>
     let selectedProductButton = document.getElementById('selectedProductButton');
     let selectedProducts = document.getElementById('selectedProducts');
+    let selectedProductsMobile = document.getElementById('selectedProductsMobile');
+
     let mb4Divs;
 
     function isSelected(id) {
-        let checkBox = document.getElementById('seletedItem' + id);
+        let checkBox = $('.seletedItem' + id)[3];
+        console.log(id);
+        console.log(checkBox);
+        console.log(checkBox.checked);
+        console.log(checkBox.value);
+
+        selectedProductButton.style.cursor = "pointer";
 
         if (checkBox.checked) {
             let categoryName = $('.seletedItem' + id)[0].innerText;
@@ -351,48 +776,133 @@
             let productDiscount = $('.seletedItem' + id)[2].innerText;
             let selectedCustomerId = $('#customerId').val();
             let selectedContactPersons = $("#contactPersons").val();
+            let currencyType = $("#currencyType").val();
+            let currency = $("#currency").val();
 
             var productHtml = `
-                <div class="selectedDiv" id="selectedDiv${id}" style="font-size: 15px;">
-                <input type="hidden" value="${id}" name="Id" />
-                <input type="hidden" value="${selectedCustomerId}" name="CustomerId" />
-                <input type="hidden" value="${selectedContactPersons}" name="ContactPersonId" />
-                <div class="form-row row">
-                    <div class="form-group col-lg-5 col-md-5 col-12">
-                        <label> <b>Ürün Kategori </b></label>
-                        <label class="selectedDivItem${id}">${categoryName}</label>
-                    </div>
-                    <div class="form-group col-lg-5 col-md-5 col-12">
-                                <label> <b>Ürün Adı </b></label><br/>
-                        <label class="selectedDivItem${id}">${productName}</label>
-                    </div>
-                </div>
-                <div class="form-row row">
-                    <div class="form-group col-lg-5 col-md-5 col-12">
+                    <div class="selectedDiv" id="selectedDiv-${id}" style="font-size: 15px;">
+                        <input type="hidden" value="${id}" name="Id" />
+                        <input type="hidden" value="${selectedCustomerId}" name="CustomerId" />
+                        <input type="hidden" value="${selectedContactPersons}" name="ContactPersonId" />
+                        <input type="hidden" value="${currencyType}" name="currencyType" />
+                        <input type="hidden" value="${currency}" name="currency" />
+                        <div class="form-row row">
+                            <div class="form-group col-lg-5 col-md-5 col-12">
+                                <label> <b>Ürün Kategori </b></label>
+                                <label class="selectedDivItem-${id}">${categoryName}</label>
+                            </div>
+                            <div class="form-group col-lg-5 col-md-5 col-12">
+                                        <label> <b>Ürün Adı </b></label><br/>
+                                <label class="selectedDivItem-${id}">${productName}</label>
+                            </div>
+                        </div>
+                        <div class="form-row row">
+                            <div class="form-group col-lg-3 col-md-5 col-12">
                                 <label for="inputName"> <b>Adet </b></label>
-                        <input type="number" id="Amount" class="form-control amounts" name="Amount" placeholder="Adet" />
-                    </div>
-                    <div class="form-group col-lg-5 col-md-5 col-12">
+                                <input type="number" id="Amount" class="form-control amounts" name="Amount" placeholder="Adet" />
+                            </div>
+                            <div class="form-group col-lg-3 col-md-5 col-12">
                                 <label> <b>İskonto</b></label>
-                        <input type="text" id="Discount" class="form-control" name="Discount" placeholder="İskonto" value="${productDiscount}" />
+                                <input type="text" id="Discount" class="form-control" name="Discount" placeholder="İskonto" value="${productDiscount}" />
+                            </div>
+                            <div class="form-group col-lg-3 col-md-5 col-12">
+                                <label> <b>Termin Süresi</b></label>
+                                <input type="text" id="Deadline" class="form-control" name="Deadline" placeholder="Termin süresi" />
+                            </div>
+                            <div class="form-group col-lg-2 col-md-1 col-12">
+                                <button class=" btn btn-danger  remove-contact" onclick="removeDiv(${id})" >Sil</button>
+                            </div>
+                        </div>
+                    <hr />
                     </div>
-                    <div class="form-group col-lg-1 col-md-1 col-12">
-                        <button class=" btn btn-danger  remove-contact" onclick="removeDiv(${id})" >Sil</button>
-                    </div>
-                </div>
-            <hr />
-            </div>
-                `;
+                        `;
+
             //document.getElementById('selectedProducts').innerHTML += productHtml; // bu yöntem ile yapıldığında her ürün eklemede içerikler sıfırlanıyor!
             selectedProducts.insertAdjacentHTML('beforeend', productHtml);
-
             selectedProductButton.disabled = false;
-
             var ctrl = 1;
 
         }
         else {
-            document.getElementById('selectedDiv' + id).remove();
+            document.getElementById('selectedDiv-' + id).remove();
+            mb4Divs = selectedProducts.querySelectorAll(".mb-4");
+
+            if (mb4Divs.length > 0) {
+
+                selectedProductButton.disabled = false;
+            } else {
+
+                selectedProductButton.disabled = true;
+
+            }
+        }
+    }
+
+    function isSelectedMobile(id) {
+        let checkBoxMobile = $('.seletedItemMobile' + id)[3];
+
+        console.log(id);
+        console.log(checkBoxMobile);
+        console.log(checkBoxMobile.checked);
+        console.log(checkBoxMobile.value);
+
+        selectedProductButton.style.cursor = "pointer";
+
+        if (checkBoxMobile.checked) {
+            let categoryName = $('.seletedItemMobile' + id)[0].innerText;
+            let productName = $('.seletedItemMobile' + id)[1].innerText;
+            let productDiscount = $('.seletedItemMobile' + id)[2].innerText;
+
+            let selectedCustomerId = $('#customerId').val();
+            let selectedContactPersons = $("#contactPersons").val();
+            let currencyType = $("#currencyType").val();
+            let currency = $("#currency").val();
+
+            var productHtml = `
+                            <div class="selectedDivMobile" id="selectedDivMobile-${id}" style="font-size: 15px;">
+                            <input type="hidden" value="${id}" name="Id" />
+                            <input type="hidden" value="${selectedCustomerId}" name="CustomerId" />
+                            <input type="hidden" value="${selectedContactPersons}" name="ContactPersonId" />
+                            <input type="hidden" value="${currencyType}" name="currencyType" />
+                            <input type="hidden" value="${currency}" name="currency" />
+                            <div class="form-row row">
+                                <div class="form-group col-lg-5 col-md-5 col-12">
+                                    <label> <b>Ürün Kategori </b></label>
+                                    <label class="selectedDivMobileItem-${id}">${categoryName}</label>
+                                </div>
+                                <div class="form-group col-lg-5 col-md-5 col-12">
+                                    <label> <b>Ürün Adı </b></label><br/>
+                                    <label class="selectedDivMobileItem-${id}">${productName}</label>
+                                </div>
+                            </div>
+                            <div class="form-row row">
+                                <div class="form-group col-lg-3 col-md-5 col-12">
+                                    <label for="inputName"> <b>Adet </b></label>
+                                    <input type="number" id="Amount" class="form-control amounts" name="Amount" placeholder="Adet" />
+                                </div>
+                                <div class="form-group col-lg-3 col-md-5 col-12">
+                                    <label> <b>İskonto</b></label>
+                                    <input type="text" id="Discount" class="form-control" name="Discount" placeholder="İskonto" value="${productDiscount}" />
+                                </div>
+                                <div class="form-group col-lg-3 col-md-5 col-12">
+                                    <label> <b>Termin Süresi</b></label>
+                                    <input type="text" id="Deadline" class="form-control" name="Deadline" placeholder="Termin süresi" />
+                                </div>
+                                <div class="form-group col-lg-2 col-md-1 col-12">
+                                    <button class=" btn btn-danger  remove-contact" onclick="removeDivMobile(${id})" >Sil</button>
+                                </div>
+                            </div>
+                        <hr />
+                        </div>
+                            `;
+
+            selectedProductsMobile.insertAdjacentHTML('beforeend', productHtml);
+            selectedProductButton.disabled = false;
+            var ctrl = 1;
+
+        }
+        else {
+            document.getElementById('selectedDivMobile-' + id).remove();
             mb4Divs = selectedProducts.querySelectorAll(".mb-4");
 
             if (mb4Divs.length > 0) {
@@ -412,19 +922,22 @@
 <script>
     function sendSelectedProducts() {
         let formData = new FormData(document.querySelector('#seletectedProductsForm')); // Form verilerini al
+        let currencyType = $("#currencyType").val();
+        let currency = $("#currency").val();
+
+        formData.append('currencyType', currencyType);
+        formData.append('currency', currency);
 
         $.ajax({
-            url: '/Offer/OfferPreview', // İstek gönderilecek URL
-            type: 'POST', // HTTP metodunu belirle
+            url: '/Offer/OfferPreview',
+            type: 'POST',
             data: formData, // Form verilerini ile
             processData: false,
             contentType: false,
             success: function (response) {
-                // Başarılı yanıt geldiğinde burada işlemler yapabilirsiniz
                 $('#productPreview').html(response);
             },
             error: function (error) {
-                // Hata durumunda burada işlemler yapabilirsiniz
                 console.error('Hata:', error);
             }
         });
@@ -434,11 +947,14 @@
 @*Seçilen ürünü kaldırma*@
 <script>
     function removeDiv(id) {
-        document.getElementById('selectedDiv' + id).remove();
-        document.getElementById('seletedItem' + id).checked = false;
+        document.getElementById('selectedDiv-' + id).remove();
+        $('.seletedItem' + id)[3].checked = false;
+    }
+    function removeDivMobile(id) {
+        document.getElementById('selectedDivMobile-' + id).remove();
+        $('.selectedDivMobile' + id)[3].checked = false;
     }
 </script>
-
 
 @*İleri ve Geri Butonlarının aktivasyonu*@
 <script>
@@ -449,7 +965,7 @@
         var current = 1;
         var steps = $("fieldset").length;
         var page = 0;
-       
+
         setProgressBar(current);
 
         $(".next").click(function () {
@@ -463,7 +979,7 @@
                     }
                 });
             }
-         
+
             if (ctrl == 0) {
                 Swal.fire('Adet alanları zorunludur!')
             } else {
@@ -534,3 +1050,5 @@
 
     });
 </script>
+
+

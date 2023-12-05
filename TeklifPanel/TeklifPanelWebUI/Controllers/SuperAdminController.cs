@@ -72,6 +72,7 @@ namespace TeklifPanelWebUI.Controllers
                     Name = companyModel.Name,
                     Email = companyModel.Email,
                     IsActive = true
+
                 };
 
                 var companyIsAdd = await _companyService.CreateAsync(company);
@@ -92,6 +93,7 @@ namespace TeklifPanelWebUI.Controllers
                 {
                     FirstName = companyModel.Name,
                     Email = companyModel.Email,
+                    IsOfferShow = true,
                 };
 
                 await _companySettingsServise.CreateCompanySettingsAsync(lastCompany.Id);

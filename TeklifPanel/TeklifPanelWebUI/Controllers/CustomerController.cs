@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using TeklifPanel.Business.Abstract;
 using TeklifPanel.Entity;
 using TeklifPanelWebUI.ViewModels;
 
 namespace TeklifPanelWebUI.Controllers
 {
+    [Authorize]
     public class CustomerController : Controller
     {
         private readonly ICustomerService _customerService;
@@ -38,7 +40,7 @@ namespace TeklifPanelWebUI.Controllers
             var customer = new Customer()
             {
                 CompanyId = companyId,
-                Discount = customerViewModel?.Discount,
+                Discount = customerViewModel.Discount ?? default,
                 Name = customerViewModel?.Name,
                 Note = customerViewModel?.Note,
                 Phone = customerViewModel?.Phone,
@@ -46,6 +48,7 @@ namespace TeklifPanelWebUI.Controllers
                 TaxOffice = customerViewModel?.TaxOffice,
                 OpenAddress = customerViewModel?.OpenAddress,
                 Email = customerViewModel?.Email,
+                SpecialNote = customerViewModel?.SpecialNote,
             };
 
             var isAddCustomer = await _customerService.CreateAsync(customer);
@@ -99,6 +102,7 @@ namespace TeklifPanelWebUI.Controllers
                 Email = customer.Email,
                 Note = customer.Note,
                 CompanyId = customer.CompanyId,
+                SpecialNote = customer.SpecialNote,
             };
             customerViewModel.CustomerContacts = customer.CustomerContacts;
             return View(customerViewModel);
@@ -122,6 +126,7 @@ namespace TeklifPanelWebUI.Controllers
             getCustomer.Phone = customerViewModel?.Phone;
             getCustomer.OpenAddress = customerViewModel?.OpenAddress;
             getCustomer.Note = customerViewModel?.Note;
+            getCustomer.SpecialNote = customerViewModel?.SpecialNote;
 
             if (customerViewModel.ContactName != null)
             {
@@ -185,6 +190,35 @@ namespace TeklifPanelWebUI.Controllers
 
             }
             return Json(new { status = 400 });
+        }
+
+        public async Task<IActionResult> CustomerDetail(int id)
+        {
+            var customer = await _customerService.GetCustomerAsync(id);
+            
+            if (customer == null)
+            {
+                TempData["Error"] = "Müşteri bulunamadı!";
+                return RedirectToAction("CustomerList");
+            }
+            var customerViewModel = new CustomerViewModel()
+            {
+                Id = customer.Id,
+                Name = customer.Name,
+                Phone = customer.Phone,
+                OpenAddress = customer.OpenAddress,
+                Discount = customer.Discount,
+                TaxNumber = customer.TaxNumber,
+                TaxOffice = customer.TaxOffice,
+                Email = customer.Email,
+                Note = customer.Note,
+                CompanyId = customer.CompanyId,
+                SpecialNote = customer.SpecialNote,
+                Company = customer.Company,
+                CustomerContacts = customer.CustomerContacts,
+            };
+
+            return View(customerViewModel);
         }
     }
 }

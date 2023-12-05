@@ -15,7 +15,7 @@
     </div>
 }
 
-<div class="row" style="margin: 2% 6%;">
+<div class="row" style="margin: 2% 0%;">
     <div class="col-lg-7 col-md-7 col-12">
         <div class="table-title">
             <h3>Müşteriler</h3>
@@ -32,7 +32,7 @@
     </div>
 </div>
 
-<table class="table-fill">
+<table class="table-fill normal-tablo">
     <thead>
         <tr>
             <th class="text-center">Firma Adı</th>
@@ -72,6 +72,36 @@
     </tbody>
 </table>
 
+<table class="table-fill mobile-tablo">
+    <thead>
+        <tr>
+            <th class="text-center">Firma Adı</th>
+            <th class="text-center">Firma Bazlı İskonto</th>
+            <th class="text-center">Detay</th>
+            <th class="text-center">İşlemler</th>
+        </tr>
+    </thead>
+    <tbody class="table-hover">
+        @foreach (var customer in Model)
+        {
+            <tr>
+                <td class="text-center">@customer.Name</td>
+                <td class="text-center">%@customer.Discount</td>
+                <td class="text-center">
+                    <a asp-controller="Customer" asp-action="CustomerDetail" asp-route-id="@customer.Id">
+                        <i class="fas fa-info-circle" style="font-size: 25px; color: #FF5722;"></i>
+                    </a>
+                </td>
+                <td class="text-center">
+                    <a class="btn btn-outline-success" asp-controller="Customer" asp-action="UpdateCustomer" asp-route-id="@customer.Id"><i class="fas fa-pen" style="padding-right: 6%;"></i></a>
+                    <a class="btn btn-outline-danger" onclick="isDeleted('@customer.Id')"><i class="fas fa-times"></i></a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
 <script>
     function isDeleted(id) {
         Swal.fire({
@@ -81,7 +111,8 @@
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
-            confirmButtonText: 'Evet, sil!'
+            confirmButtonText: 'Evet, sil!',
+            cancelButtonText: 'İptal',
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
@@ -89,7 +120,6 @@
                     url: '/Customer/DeleteCustomer',
                     data: { id: id },
                     success: function (res) {
-                        console.log(res.status);
                         if (res.status == 200) {
                             Swal.fire({
                                 icon: 'success',

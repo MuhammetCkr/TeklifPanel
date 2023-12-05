@@ -44,9 +44,9 @@ namespace TeklifPanel.Business.Concrete
             throw new NotImplementedException();
         }
 
-        public Task<Offer> GetByIdAsync(int id)
+        public async Task<Offer> GetByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            return await _offerRepository.GetByIdAsync(id);
         }
 
         public async Task<List<Offer>> GetCompanyOffersAsync(int companyId)
@@ -54,9 +54,34 @@ namespace TeklifPanel.Business.Concrete
             return await _offerRepository.GetCompanyOffersAsync(companyId);
         }
 
+        public async Task<List<Offer>> GetCustomerOffersAsync(int customerId)
+        {
+            return await _offerRepository.GetCustomerOffersAsync(customerId);
+        }
+
+        public async Task<List<Offer>> GetFilterOfferAsync(int? customerId, string userId, DateTime? startDate, DateTime? endDate)
+        {
+            return await _offerRepository.GetFilterOfferAsync(customerId, userId, startDate, endDate);
+        }
+
         public Task<ICollection<Offer>> GetManyAsync(Expression<Func<Offer, bool>> expression)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<Offer> GetOfferAsync(int offerId)
+        {
+            return await _offerRepository.GetOfferAsync(offerId);
+        }
+
+        public async Task<bool> GetOfferDeleteAsync(Offer offer)
+        {
+            return await _offerRepository.GetOfferDeleteAsync(offer);
+        }
+
+        public async Task<List<Offer>> GetSearchOfferAsync(int? companyId, string searchWord)
+        {
+            return await _offerRepository.GetSearchOfferAsync(companyId, searchWord);
         }
 
         public void Update(Offer entity)
@@ -64,9 +89,9 @@ namespace TeklifPanel.Business.Concrete
             throw new NotImplementedException();
         }
 
-        public Task<bool> UpdateAsync(Offer entity)
+        public async Task<bool> UpdateAsync(Offer entity)
         {
-            throw new NotImplementedException();
+            return await _offerRepository.UpdateAsync(entity);
         }
 
         Task<ICollection<Offer>> IService<Offer>.GetAll()

@@ -11,5 +11,6 @@ namespace TeklifPanel.Business.Abstract
     {
         Task<User> GetUserAsync(string userId);
         Task GetUserDeleteAsync(string userId);
+        Task<List<User>> GetUsersByCompany (int companyId);
     }
 }

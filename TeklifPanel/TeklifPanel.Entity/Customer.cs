@@ -17,6 +17,7 @@ namespace TeklifPanel.Entity
         public int TaxNumber { get; set; } // Vergi numarası
         public string TaxOffice { get; set; } // Vergi Dairesi
         public string Note { get; set; }
+        public string SpecialNote { get; set; }
         public string Phone { get; set; }
         public decimal? Discount { get; set; } // İskonto
         public List<CustomerContact> CustomerContacts { get; set; }

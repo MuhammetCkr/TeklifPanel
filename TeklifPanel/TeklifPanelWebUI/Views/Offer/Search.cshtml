@@ -5,32 +5,62 @@
 
 @foreach (var product in Model)
 {
-    
-    <tr>
+    <tr data-bs-toggle="popover" data-bs-placement="right"
+        data-bs-custom-class="custom-popover"
+        data-bs-title="Geçmiş İskonto"
+        data-bs-content="@Html.Raw("<ul class='p-0 m-0'>" + string.Join("", product.ProductOffers.Where(p => p.ProductId == product.Id && p.Offer.UserId == product.User.Id).OrderByDescending(p => p.Offer.DateOfOffer).Take(5).Select(p =>"<li> -> " + p.Offer.DateOfOffer.ToShortDateString() +" - "+ p.Discount + "</li>" + " - " + p.ProductSellPrice)) + "</ul>")">
         @{
             string className = "seletedItem" + product.Id;
         }
         <td class="text-center @className">@product.CategoryName</td>
         <td class="text-center @className">@product.Name</td>
         <td class="text-center">@product.Code</td>
-        <td class="text-center">@product.SellPrice₺</td>
+        <td class="text-center">@(product.Currency == "tl" ? "₺" : product.Currency == "usd" ? "$" : product.Currency == "eu" ? "€" : "£")@product.SellPrice?.ToString("N2")</td>
         <td class="text-center">
-            @foreach (var image in product.Images.Take(1))
-            {
-                <img src="@Jobs.ImageRoute@product.CompanyId/@image" width="40%">
-            }
+            <div class="icon-container">
+                <div class="icon">
+                    <i class="fas fa-images" style="font-size:40px;"></i>
+                </div>
+                <div class="image-hover">
+                    @foreach (var image in product.Images.Take(1))
+                    {
+                        <img src="@Jobs.ImageRoute@product.CompanyId/@image">
+                    }
+                </div>
+            </div>
         </td>
         <td class="text-center">@product.Stock</td>
         <td class="text-center @className">@product.Discount</td>
-        @*         <td class="text-center">
-    <input type="text" class="form-control @className" id="inputIskonto" placeholder="%" value="@product.Discount" name="Discount" readonly>
-    </td> *@
         <td class="text-center">
-            <div class="form-check form-switch">
-                <input id="@className" onchange="isSelected(@product.Id)" type="checkbox" name="IsSeleted">
+            <div class="form-check form-switch" style="padding: 0;">
+                <input id="@className" onchange="isSelected(@product.Id)" type="checkbox" name="IsSeleted" style="margin: 0;">
+
                 <input type="hidden" class="temp" value="@product.Id">
-                <input type="hidden" id="searchCategoryId" name="searchCategoryId" value="@product.CategoryId">
             </div>
         </td>
     </tr>
 }
+
+<script>
+    $(document).ready(function () {
+        var checkboxes = document.querySelectorAll('input[type="checkbox"]');
+        $('[data-bs-toggle="popover"]').popover({
+            html: true,
+            content: function () {
+                return $(this).data('content');
+            }
+        });
+        $('[data-bs-toggle="popover"]').on('mouseleave', function () {
+            $(this).popover('hide');
+        });
+        checkboxes.forEach(function (checkbox) {
+            checkbox.addEventListener('change', function () {
+                if (this.checked) {
+                    $('[data-bs-toggle="popover"]').popover('hide');
+                }
+            });
+        });
+    });
+
+</script>
+

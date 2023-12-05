@@ -13,5 +13,10 @@ namespace TeklifPanel.Entity
         public Offer Offer { get; set; }
         public int OfferId { get; set; }
         public decimal Discount { get; set; } // İskonto
+        public decimal ProductSellPrice { get; set; }
+        public string Deadline { get; set; } // Teslim Tarihi
+        public int Amount { get; set; }
+        public string Currency { get; set; }
+
     }
 }

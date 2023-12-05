@@ -4,9 +4,10 @@
 @model List<CustomerContact>
 
 <label for="contactPersons" class="fieldlabels">Yetkiliyi Seçin:</label>
-<select id="contactPersons">
+<select id="contactPersons" name="contactPersonId">
     @foreach (var person in Model)
     {
-        <option value="@person.Id">@person.Name</option>
+        <option value="@person.Id" >@person.Name</option>
     }
 </select>
+

@@ -15,16 +15,13 @@
     </div>
 }
 
-<div class="row" style="margin: 2% 6%;">
-    <div class="col-lg-5 col-md-4 col-12">
+<div class="row" style="margin: 2% 0%;">
+    <div class="col-lg-6 col-md-6 col-12" style="padding: 0;">
         <div class="table-title">
             <h3>
                 Ürünler
             </h3>
         </div>
-    </div>
-
-    <div class="col-lg-2 col-md-4 col-12">
 
         <div class="dropdown kat">
             <div class="dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -41,7 +38,7 @@
         </div>
     </div>
 
-    <div class="col-lg-5 col-md-4 col-12 ekleme">
+    <div class="col-lg-6 col-md-6 col-12 ekleme">
 
         <div class="search">
             <input type="text" class="searchTerm" id="search" placeholder="Arama Yapın" onkeyup="searchWord()">
@@ -53,12 +50,15 @@
 </div>
 
 
-<table class="table-fill">
+<table class="table-fill normal-tablo">
     <thead>
         <tr>
-            <th class="text-left">Ürün Fotoğrafı</th>
-            <th class="text-left">Ürün Adı</th>
+            <th class="text-left">QR Code</th>
+            <th class="text-left">Görsel</th>
             <th class="text-left">Ürün Kodu</th>
+            <th class="text-left">Ürün Adı</th>
+            <th class="text-left">Stok Mikratı</th>
+            <th class="text-left">Birim</th>
             <th class="text-left">Ürün Alış Fiyatı</th>
             <th class="text-left">Ürün Satış Fiyatı</th>
             <th class="text-left">Ürün Kısa Açıklama</th>
@@ -67,22 +67,53 @@
     </thead>
     <tbody class="table-hover">
         @*PartialView - Search*@
-        @foreach (var product in Model)
+        @foreach (var product in Model.Where(x => x.IsActive))
         {
             <tr>
+                <td class="text-left">
+                    @if (product.QRCode != null)
+                    {
+                        <img src="data:image/png;base64,@Convert.ToBase64String(product.QRCode)" alt="QR Code" />
+                    }
+                </td>
                 <td class="text-center">
                     @if (product.ProductImages.Count() > 0)
                     {
-                        foreach (var image in product.ProductImages.Take(1))
-                        {
-                            <img src="@Jobs.ImageRoute@product.CompanyId/@image.Url" alt="">
-                        }
+                        <div class="icon-container">
+                            <div class="icon">
+                                <i class="fas fa-images" style="font-size:40px;"></i>
+                            </div>
+                            <div class="image-hover">
+                                @foreach (var image in product.ProductImages.Take(1))
+                                {
+                                    <img src="@Jobs.ImageRoute@product.CompanyId/@image.Url" alt="">
+                                }
+                            </div>
+                        </div>
                     }
                 </td>
-                <td class="text-left">@product.Name</td>
                 <td class="text-left">@product.Code</td>
-                <td class="text-left">@product.BuyPrice₺</td>
-                <td class="text-left">@product.SellPrice₺</td>
+                <td class="text-left">@product.Name</td>
+                <td class="text-left">@product.Stock</td>
+                <td class="text-left">@product.Unit</td>
+                @if (product.Currency == "tl")
+                {
+                <td class="text-left">@product.BuyPrice?.ToString("C",new System.Globalization.CultureInfo("tr-TR"))</td>
+                <td class="text-left">@product.SellPrice?.ToString("C",new System.Globalization.CultureInfo("tr-TR"))</td>
+                }else if (product.Currency == "usd")
+                {
+                    <td class="text-left">$@product.BuyPrice?.ToString("N2",new System.Globalization.CultureInfo("tr-TR"))</td>
+                    <td class="text-left">$@product.SellPrice?.ToString("N2",new System.Globalization.CultureInfo("tr-TR"))</td>
+                }else if (product.Currency == "eu")
+                {
+                    <td class="text-left">€@product.BuyPrice?.ToString("N2",new System.Globalization.CultureInfo("tr-TR"))</td>
+                    <td class="text-left">€@product.SellPrice?.ToString("N2",new System.Globalization.CultureInfo("tr-TR"))</td>
+                }
+                else if (product.Currency == "gbp")
+                {
+                    <td class="text-left">£@product.BuyPrice?.ToString("N2",new System.Globalization.CultureInfo("tr-TR"))</td>
+                    <td class="text-left">£@product.SellPrice?.ToString("N2",new System.Globalization.CultureInfo("tr-TR"))</td>
+                }
                 <td class="text-left">
                     @product.Detail
                 </td>
@@ -93,7 +124,37 @@
                 </td>
             </tr>
         }
+    </tbody>
+</table>
 
+<table class="table-fill mobile-tablo">
+    <thead>
+        <tr>
+            <th class="text-left">Ürün Kodu</th>
+            <th class="text-left">Ürün Adı</th>
+            <th class="text-left">Detay</th>
+            <th class="text-left">Ürün Sil</th>
+        </tr>
+    </thead>
+    <tbody class="table-hover">
+        @*PartialView - Search*@
+        @foreach (var product in Model.Where(x => x.IsActive))
+        {
+            <tr>
+                <td class="text-left">@product.Code</td>
+                <td class="text-left">@product.Name</td>
+                <td class="text-center">
+                    <a asp-controller="Product" asp-action="ProductDetail" asp-route-id="@product.Id">
+                        <i class="fas fa-info-circle" style="font-size: 25px; color: #FF5722;"></i>
+                    </a>
+                </td>
+                <td class="text-center">
+                    <a class="btn btn-outline-success" asp-controller="Product" asp-action="UpdateProduct" asp-route-id="@product.Id"><i class="fas fa-pen" style="padding-right: 6%;"></i></a>
+                    <a class="btn btn-outline-danger" onclick="deleteProduct('@product.Id')"><i class="fas fa-times"></i></a>
+
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
 
@@ -102,16 +163,19 @@
 <script>
     function searchWord() {
         let searchVal = $('#search').val();
-
-        $.ajax({
-            type: 'POST',
-            url: '/Product/Search',
-            data: { searchWord: searchVal },
-            success: function (result){
-                let table = $('.table-hover').html(result);
-
-            }
-        });
+        console.log(searchVal);
+        if (searchVal.trim() === "") {
+            window.location.href = '/Product/ProductList';
+        } else {
+            $.ajax({
+                type: 'POST',
+                url: '/Product/Search',
+                data: { searchWord: searchVal },
+                success: function (result) {
+                    let table = $('.table-hover').html(result);
+                }
+            });
+        }
     }
 </script>
 

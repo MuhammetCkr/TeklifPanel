@@ -8,7 +8,7 @@
 }
 
 <div class="container musteri">
-    <form asp-controller="SuperAdmin" asp-action="CompanyCreate" method="post">
+    <form asp-controller="SuperAdmin" asp-action="CompanyCreate" method="post" onsubmit="return kontrol()">
         <div class="form-row row">
             <div class="form-group col-lg-6 col-md-6 col-12">
                 <label>Kullanıcı Adı</label>
@@ -21,6 +21,8 @@
             <div class="form-group col-lg-6 col-md-6 col-12">
                 <label>Kullanıcı Şifre</label>
                 <input type="password" class="form-control" placeholder="Şifre" asp-for="Password">
+                <label style="color:red">Şifrede en az 1 adet büyük harf,1 adet küçük harf, 1 adet numara, 1 adet özel karakter girilmelidir. </label>
+
             </div>
             <div class="form-group col-lg-6 col-md-6 col-12">
                 <label>Şifreyi Tekrar Girin</label>
@@ -35,3 +37,38 @@
 
 
 
+<script>
+    function kontrol() {
+        let password = $('#Password').val();
+        let rePassword = $('#RePassword').val();
+        let uppercaseRegex = /[A-Z]/;
+        let lowercaseRegex = /[a-z]/;
+        let numberRegex = /[0-9]/;
+        let specialCharacterRegex = /[!#$%^&*()_+{}\[\]:;<>,.?~\\-]/;
+
+        if (
+            uppercaseRegex.test(password) &&
+            lowercaseRegex.test(password) &&
+            numberRegex.test(password) &&
+            specialCharacterRegex.test(password)
+        ) {
+            if (password == rePassword) {
+                return true;
+            } else {
+                Swal.fire(
+                    'Uyarı',
+                    'Şifreler uyuşmuyor',
+                    'warning'
+                )
+                return false;
+            }
+        } else {
+            Swal.fire(
+                'HATA',
+                'Şifre gereksinimleri uyuşmuyor',
+                'warning'
+            )
+            return false;
+        }
+    }
+</script>

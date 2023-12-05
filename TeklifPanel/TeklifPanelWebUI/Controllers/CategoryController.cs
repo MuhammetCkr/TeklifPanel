@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using TeklifPanel.Business.Abstract;
 using TeklifPanel.Core;
 using TeklifPanel.Entity;
@@ -6,6 +7,7 @@ using TeklifPanelWebUI.Models;
 
 namespace TeklifPanelWebUI.Controllers
 {
+    [Authorize]
     public class CategoryController : Controller
     {
         private readonly ICategoryService _categoryService;

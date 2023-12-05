@@ -1,0 +1,170 @@
+﻿@{
+    Layout = null;
+}
+@model Product
+
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="Abstract" content="" />
+    <meta name="Author" content="" />
+    <title>@TempData["Title"]</title>
+    <!--Kelimeler Max. 5 Kelime -->
+    <script src="~/js/checkInput.js"></script>
+    <meta name="keywords" content="" />
+
+    <!-- Sayfa Açıklaması Max. 115 Karakter -->
+    <meta name="description" content="" />
+    <meta property="og:description" content="" />
+    <meta itemprop="description" content="" />
+    <meta name="twitter:description" content="" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.4.1/jspdf.debug.js"></script>
+    @await Html.PartialAsync("_Links")
+
+</head>
+
+
+
+<body>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Containers */
+        .product {
+            max-width: 800px;
+            border-radius: 6px;
+            overflow: hidden;
+            box-shadow: 0 30px 80px 10px rgba(0, 0, 0, 0.2);
+            display: flex;
+        }
+
+        .product-hero {
+            flex: 0 0 45%;
+        }
+
+        .product-content {
+            background: #e5e5e5;
+            flex: 1;
+            padding: 30px 10px 20px 16px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .product-image {
+            width: 100%;
+            display: block;
+        }
+
+        /* Content */
+        body {
+            color: #444;
+            font-size: 16px;
+            padding: 50px;
+            background: linear-gradient(to bottom right, #FF5722, #ec4e1c);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .product-heading {
+            font-size: 120%;
+            font-weight: 400;
+            color: #141e30;
+            margin-right: auto;
+        }
+
+        .product-tag {
+            display: flex;
+        }
+
+            .product-tag p {
+                font-size: 10px;
+                color: white;
+                padding: 2px 7px;
+                border-radius: 100px;
+                margin: 5px 5px 0 0;
+            }
+
+        .product-tag-1 {
+            background-color: #141e30;
+        }
+
+        .product-tag-2 {
+            background-color: #243b55;
+        }
+
+        .product-description {
+            font-weight: 300;
+            font-size: 14px;
+            margin: auto;
+        }
+
+
+        .product-detail {
+            font-weight: bold;
+            font-size: 20px;
+            margin-right: 20px;
+            align-items: center;
+            display: flex;
+        }
+
+        .emoji {
+            font-size: 20px;
+            margin-right: 3px;
+            color: #FF5722;
+            font-weight: bold;
+        }
+    </style>
+    @if (Model == null)
+    {
+        <figure class="product">
+            <div class="product-content">
+                <div class="product-title">
+                    <h1 class="product-heading">Ürün bulunamadı</h1>
+                </div>
+            </div>
+        </figure>
+    }
+    else
+    {
+        <figure class="product">
+            <div class="product-hero">
+                @if (Model.ProductImages.Count() > 0)
+                {
+                    foreach (var image in Model.ProductImages.Take(1))
+                    {
+                        <img src="@Jobs.ImageRoute@Model.CompanyId/@image.Url" alt="white amber mist" class="product-image">
+                    }
+                }
+            </div>
+            <div class="product-content">
+                <div class="product-title">
+                    <h1 class="product-heading">@Model.Name</h1>
+                </div>
+                <p class="product-description"> @Model.Detail</p>
+                <div class="product-details">
+                    <p class="product-detail"><span class="emoji">Satış Fiyatı: </span>@Model.SellPrice </p>
+                    <p class="product-detail"><span class="emoji">Stok Miktarı: </span>@Model.Stock </p>
+
+                </div>
+            </div>
+        </figure>
+    }
+
+
+    @await Html.PartialAsync("_Scripts")
+
+</body>
+
+</html>
+

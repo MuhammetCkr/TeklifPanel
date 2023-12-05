@@ -3,20 +3,35 @@
     @{
         Layout = null;
     }
-@foreach (var product in Model)
+@foreach (var product in Model.Where(x => x.IsActive))
 {
     <tr>
+        <td class="text-left">
+            @if (product.QRCode != null)
+            {
+                <img src="data:image/png;base64,@Convert.ToBase64String(product.QRCode)" alt="QR Code" />
+            }
+        </td>
         <td class="text-center">
             @if (product.ProductImages.Count() > 0)
             {
-                foreach (var image in product.ProductImages.Take(1))
-                {
-                    <img src="@Jobs.ImageRoute@product.CompanyId/@image.Url" alt="">
-                }
+                <div class="icon-container">
+                    <div class="icon">
+                        <i class="fas fa-images" style="font-size:40px;"></i>
+                    </div>
+                    <div class="image-hover">
+                        @foreach (var image in product.ProductImages.Take(1))
+                        {
+                            <img src="@Jobs.ImageRoute@product.CompanyId/@image.Url" alt="">
+                        }
+                    </div>
+                </div>
             }
         </td>
-        <td class="text-left">@product.Name</td>
         <td class="text-left">@product.Code</td>
+        <td class="text-left">@product.Name</td>
+        <td class="text-left">@product.Stock</td>
+        <td class="text-left">@product.Unit</td>
         <td class="text-left">@product.BuyPrice₺</td>
         <td class="text-left">@product.SellPrice₺</td>
         <td class="text-left">

@@ -66,6 +66,11 @@ namespace TeklifPanel.Business.Concrete
             await _userRepository.GetUserDeleteAsync(userId);
         }
 
+        public async Task<List<User>> GetUsersByCompany(int companyId)
+        {
+            return await _userRepository.GetUsersByCompany(companyId);
+        }
+
         public void Update(User entity)
         {
             throw new NotImplementedException();

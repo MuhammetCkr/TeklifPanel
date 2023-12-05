@@ -10,5 +10,10 @@ namespace TeklifPanel.Business.Abstract
     public interface IOfferService : IService<Offer>
     {
         Task<List<Offer>> GetCompanyOffersAsync(int companyId);
+        Task<List<Offer>> GetCustomerOffersAsync(int customerId);
+        Task<List<Offer>> GetSearchOfferAsync(int? companyId, string searchWord);
+        Task<List<Offer>> GetFilterOfferAsync(int? customerId, string? userId, DateTime? startDate, DateTime? endDate);
+        Task<bool> GetOfferDeleteAsync(Offer offer);
+        Task<Offer> GetOfferAsync(int offerId);
     }
 }

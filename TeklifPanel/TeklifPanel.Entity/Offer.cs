@@ -29,5 +29,12 @@ namespace TeklifPanel.Entity
         public string UserId { get; set; }
         public decimal? Discount { get; set; }
         public decimal TotalPrice { get; set; }
+        public bool IsApproved { get; set; }
+        public string Note { get; set; }
+        public bool IsSend { get; set; }
+        public bool IsDeleted { get; set; }
+        public string CurrenyType { get; set; }
+        public string Currency { get; set; }
+
     }
 }

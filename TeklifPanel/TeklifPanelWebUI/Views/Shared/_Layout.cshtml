@@ -17,8 +17,8 @@
     <meta property="og:description" content="" />
     <meta itemprop="description" content="" />
     <meta name="twitter:description" content="" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.4.1/jspdf.debug.js"></script>
     @await Html.PartialAsync("_Links")
+
 </head>
 
 <body>
@@ -42,7 +42,25 @@
 
     @await Html.PartialAsync("_Scripts")
     @await RenderSectionAsync("Scripts", required: false)
+    <script>
+        var divs = document.querySelectorAll(".custom-popover");
+        console.log(divs);
+        divs.forEach(function (div) {
+            div.addEventListener("click", function () {
+                console.log(div);
+                divs.forEach(function (d) {
+
+                    d.classList.add("d-none");
+                });
+                this.classList.remove("d-none");
+            });
+        });
+    </script>
+
+   
+
 
 </body>
 
 </html>
+

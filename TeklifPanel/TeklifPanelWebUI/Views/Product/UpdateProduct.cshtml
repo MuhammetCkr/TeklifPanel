@@ -51,7 +51,20 @@
         <div class="form-row row">
             <div class="form-group col-lg-6 col-md-6 col-12">
                 <label for="inputName">Ürün Stok</label>
-                <input type="number" class="form-control" asp-for="Stock" value="@Model.Stock" placeholder="Stok Adedi">
+                <input type="number" class="form-control" asp-for="Stock" placeholder="Stok Adedi">
+            </div>
+            <div class="form-group col-lg-2 col-md-2 col-12">
+                <label for="inputName">Birim</label>
+                <input type="text" class="form-control" asp-for="Unit" placeholder="Birim">
+            </div>
+            <div class="form-group col-lg-2 col-md-2 col-12">
+                <label for="inputName">Para Birimi</label>
+                <select class="form-control" asp-for="Currency">
+                    <option value="tl">TL</option>
+                    <option value="usd">USD</option>
+                    <option value="eu">EURO</option>
+                    <option value="gbp">GBP</option>
+                </select>
             </div>
             <div class="form-group col-lg-2 col-md-2 col-12">
                 <label for="inputPTel">Ürün listelensin mi?</label>
@@ -73,13 +86,13 @@
                 }
             </div>
 
-            <input type="file" class="form-control" name="images" placeholder="Fotoğraf" accept=".png">
+            <input type="file" class="form-control" name="images" placeholder="Fotoğraf" accept=".png, .jpg, .jpeg ">
 
             <div class="form-group">
                 <label for="exampleFormControlTextarea1">Ürün Açıklaması</label>
                 <textarea class="form-control" id="exampleFormControlTextarea1" asp-for="Detail" rows="3">@Model.Detail</textarea>
             </div>
-
-            <button type="submit" class="btn btn-primary">Ürünü Güncelle</button>
+        </div>
+        <button type="submit" class="btn btn-primary">Ürünü Güncelle</button>
     </form>
 </div>

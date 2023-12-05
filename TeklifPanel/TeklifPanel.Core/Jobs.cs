@@ -3,6 +3,8 @@ using Newtonsoft.Json;
 using PdfSharp;
 using PdfSharp.Drawing;
 using PdfSharp.Pdf;
+using QRCoder;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +13,8 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using static System.Net.Mime.MediaTypeNames;
+using System.Xml;
+using System.Drawing;
 
 namespace TeklifPanel.Core
 {
@@ -18,6 +22,24 @@ namespace TeklifPanel.Core
     {
         public const string ImageRoute = "/Content/images/C";
         public const string PdfRoute = "/Content/pdfs/C";
+        public const string ExcelRoute = "/Content/excel/C";
+
+        public static string UploadExcel(IFormFile file, string url, int companyId)
+        {
+            var extension = Path.GetExtension(file.FileName);
+            var randomName = $"{url}-{Guid.NewGuid()}{extension}";
+
+            var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/Content/excel/C" + companyId);
+            Directory.CreateDirectory(folderPath);
+            var path = Path.Combine(folderPath, randomName);
+
+            using (var stream = new FileStream(path, FileMode.Create))
+            {
+                file.CopyTo(stream);
+            }
+            return path;
+        }
+
         public static string UploadImage(IFormFile file, string url, int companyId)
         {
             var extension = Path.GetExtension(file.FileName);
@@ -34,10 +56,11 @@ namespace TeklifPanel.Core
             return randomName;
         }
 
-        public static string UploadPdf(IFormFile file, string url, int companyId)
+        public static string UploadPdf(IFormFile file, string customerName, int companyId, string companyName)
         {
-            var extension = Path.GetExtension(file.FileName);
-            var randomName = $"{url}-{Guid.NewGuid()}{extension}";
+            var company = companyName.Split(" ");
+            var customer = customerName.Split(" ");
+            var randomName = $"{company[0]}-{customer[0]}-{DateTime.Now.ToShortDateString()}";
 
             var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/Content/pdfs/C" + companyId);
 
@@ -57,6 +80,8 @@ namespace TeklifPanel.Core
 
             return result;
         }
+
+
 
         public static string CreatePdf(string folderPath, string randomName)
         {
@@ -136,16 +161,20 @@ namespace TeklifPanel.Core
             return userName;
         }
 
-        public static string CreateMessage(string title, string message, string alertType)
-        {
-            var alertMessage = new AlertMessage()
-            {
-                Title = title,
-                Message = message,
-                AlertType = alertType
-            };
-            return JsonConvert.SerializeObject(alertMessage);
-        }
-    }
 
+        public static byte[] GenerateQrCodeFromUrl(string url)
+        {
+            QRCodeGenerator qrGenerator = new QRCodeGenerator();
+            QRCodeData qrCodeData = qrGenerator.CreateQrCode(url, QRCodeGenerator.ECCLevel.Q);
+            QRCode qrCode = new QRCode(qrCodeData);
+
+            using (Bitmap qrCodeImage = qrCode.GetGraphic(10))
+            using (MemoryStream stream = new MemoryStream())
+            {
+                qrCodeImage.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
+                return stream.ToArray();
+            }
+        }
+
+    }
 }

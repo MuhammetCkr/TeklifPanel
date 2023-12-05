@@ -29,6 +29,7 @@ namespace TeklifPanel.Data.Concrete.EfCore
         public DbSet<ProductImage> ProductImages { get; set; }
         public DbSet<ProductOffer> ProductOffers { get; set; }
         public DbSet<Iban> Ibans { get; set; }
+        public DbSet<OfferTable> OfferTables { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -39,11 +40,6 @@ namespace TeklifPanel.Data.Concrete.EfCore
                     ut.ProductId,
                     ut.OfferId
                 });
-
-            modelBuilder.Entity<Company>()
-                .HasData(
-                new Company { Id = 1, Name = "TTRBilişim" }
-                );
 
             modelBuilder.ApplyConfiguration(new ProductConfigurations());
             modelBuilder.ApplyConfiguration(new AddressConfigurations());

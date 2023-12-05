@@ -19,7 +19,7 @@ a:focus {
 }
 
 .navbar {
-    padding: 15px 10px;
+    padding: 15px 11px;
     background: #fff;
     border: none;
     border-radius: 0;
@@ -213,8 +213,8 @@ div#navbarSupportedContent {
 
 .kutucuk {
     box-shadow: 0px 0px 3px slategray;
-    margin: 4%;
-    padding: 4%;
+    /* margin: 4%; */
+    padding: 5% 5%;
     color: white;
     height: 100%;
     position: relative;
@@ -222,16 +222,17 @@ div#navbarSupportedContent {
 
 .kutucuk-sayi {
     font-size: 20px;
+    padding-bottom: 6%;
 }
 
     .kutucuk-sayi p {
         font-size: 16px;
-        margin-top: 6px;
+        margin-top: 4%;
     }
 
 .dash-bilgi-title {
     text-align: center;
-    margin-bottom: 2%;
+    margin-bottom: 1rem;
     font-size: 25px;
     font-weight: bold;
     color: #666B85;
@@ -270,8 +271,8 @@ div.table-title {
     border-radius: 3px;
     border-collapse: collapse;
     /* height: 320px; */
-    margin: auto;
-    max-width: 90%;
+    /* margin: auto;*/
+    /* max-width: 90%; */
     padding: 5px;
     width: 100%;
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
@@ -345,7 +346,7 @@ td {
     text-align: center;
     vertical-align: middle;
     font-weight: 300;
-    font-size: 13px;
+    font-size: 15px;
     text-shadow: -1px -1px 1px rgba(0, 0, 0, 0.1);
     border-right: 1px solid #C1C3D1;
 }
@@ -355,7 +356,7 @@ td {
     }
 
 .ekleme .btn {
-    font-size: 15px;
+    font-size: 17px;
     font-weight: 400;
     font-style: normal;
     font-family: "Roboto", helvetica, arial, sans-serif;
@@ -383,7 +384,8 @@ td {
 td.text-left img {
     border-radius: 10%;
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
-    width: 46%;
+    margin: 4%;
+    width: 120px;
 }
 
 
@@ -393,6 +395,7 @@ td.text-left img {
     width: 100%;
     position: relative;
     display: flex;
+    justify-content: flex-end;
 }
 
 .searchTerm {
@@ -418,7 +421,7 @@ td.text-left img {
 }
 
 
-/* MÃ¼ÅŸteri Ekle */
+/* MÃƒÂ¼Ã…Å¸teri Ekle */
 
 .container.musteri {
     position: relative;
@@ -468,7 +471,7 @@ td.text-left img {
 }
 
 
-/* LOGÄ°N PAGE */
+/* LOGÃ„Â°N PAGE */
 
 
 .login-box {
@@ -526,7 +529,7 @@ td.text-left img {
             font-size: 12px;
         }
 
-    .login-box form a {
+/*    .login-box form a {
         position: relative;
         display: inline-block;
         padding: 10px 20px;
@@ -540,7 +543,7 @@ td.text-left img {
         letter-spacing: 4px;
         background-color: #dee2e6;
         border-radius: 10px;
-    }
+    }*/
 
 
 
@@ -761,7 +764,7 @@ td.text-left img {
 }
 
 .silmebuton {
-    margin-top: 16%;
+    margin-top: 2rem;
 }
 
 div#selectedProducts {
@@ -803,6 +806,7 @@ div#selectedProducts {
     margin-top: 25px;
     text-align: left;
 }
+
 
 .giris input[type=text] {
     background-color: #1A2226;
@@ -887,9 +891,10 @@ div#selectedProducts {
 }
 
 .login-text {
-    text-align: left;
-    padding-left: 0px;
-    color: #A2A4A4;
+    text-align: end;
+    color: #c75f05;
+    padding: 6px 0;
+    background: none;
 }
 
 .loginbttm {
@@ -899,4 +904,299 @@ div#selectedProducts {
 .kutucuk-tarih {
     position: absolute;
     bottom: 2%;
+}
+
+.icon-container {
+    position: relative;
+    display: inline-block;
+}
+
+.icon {
+    width: 100%; /* Ä°kon geniÅŸliÄŸi */
+    height: 50px; /* Ä°kon yÃ¼ksekliÄŸi */
+    cursor: pointer;
+}
+
+.image-hover {
+    display: none;
+    position: absolute;
+    top: -11%;
+    right: 78px;
+    background-color: #ebebeb;
+    width: 300px;
+    height: 300px;
+    border: 10px solid white;
+}
+
+    .image-hover img {
+        width: 100%;
+        height: 100%;
+        padding: 10% 0;
+    }
+
+.icon:hover + .image-hover {
+    display: block;
+}
+
+.teklif-btn {
+    margin-right: 3%;
+    background-color: #FF5722;
+    color: #fff;
+    width: 100%;
+    font-size: 30px;
+}
+
+.form-check-input:checked {
+    background-color: #FF5722;
+    border-color: #FF5722;
+}
+
+td#td-productQRCode-14 img {
+    width: 100px;
+}
+
+div#selectedProducts button {
+    margin: 1.6rem 0;
+}
+
+td.text-left .btn img {
+    width: 50px;
+}
+
+.dovizkuru {
+    padding: 0 3rem;
+    font-size: 14px;
+    font-weight: 300;
+    text-align: center;
+}
+
+    .dovizkuru span {
+        text-align: center;
+        font-weight: bold;
+        font-size: 17px;
+    }
+
+.yukleme-mesaj i {
+    font-size: 60px;
+    color: #FF5722;
+}
+
+.yukleme-mesaj p {
+    padding-top: 30px;
+    font-size: 20px;
+}
+
+label.yukleme-baslik {
+    padding: 1rem 0;
+    font-size: 20px;
+}
+
+.yukleme div#dZUpload {
+    border-radius: 9px;
+}
+
+    .yukleme div#dZUpload:hover {
+        border-color: #FF5722;
+    }
+
+.yukleme-not-baslik {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 3rem;
+    color: #FF5722;
+}
+
+.yukleme-not {
+    margin: 0 4rem;
+}
+
+    .yukleme-not i {
+        color: #FF5722;
+    }
+
+    .yukleme-not ul {
+        padding: 0;
+        margin-bottom: 3rem;
+    }
+
+        .yukleme-not ul li {
+            margin-bottom: 3%;
+        }
+
+.ornek-excel i {
+    color: #fff;
+    padding: 10px;
+}
+
+.card-body.yukleme {
+    padding: 0;
+}
+
+.ornek-excel a.form-control {
+    display: inline;
+    background: #FF5722;
+    color: #fff;
+    font-size: 20px;
+}
+
+.yukleme-baslik {
+    padding-bottom: 1rem;
+    font-size: 20px;
+    font-weight: bold;
+    color: #FF5722;
+}
+
+.yukleme-excel .form-button {
+    color: #fff;
+    border: #FF5722;
+    background-color: #FF5722;
+    padding: 9px;
+}
+
+.iban-baslik {
+    text-align: center;
+    font-size: 25px;
+    margin-bottom: 2rem;
+    color: #FF5722;
+    font-weight: 600;
+}
+
+.gorunurluk-buton {
+    justify-content: center;
+    display: flex;
+}
+
+.gorunurluk-baslik {
+    margin-bottom: 1rem;
+    font-size: 22px;
+    text-align: center;
+    color: #FF5722;
+    font-weight: 600;
+}
+
+.gorunurluk-aciklama {
+    text-orientation: unset;
+    writing-mode: vertical-rl;
+    position: absolute;
+    left: -30px;
+    top: 50px;
+}
+
+.pdetail-baslik {
+    font-size: 20px;
+    color: #FF5722;
+}
+
+.mobile-tablo {
+    display: none;
+}
+
+
+
+@media (max-width: 750px) {
+
+    .navbar {
+        margin-bottom: 25px;
+    }
+
+        .table-title h3 {
+        text-align: center;
+    }
+
+    .dovizkuru span {
+        font-size: 13px;
+    }
+
+    .dovizkuru {
+        font-size: 11px;
+    }
+
+    th {
+        font-size: 15px;
+    }
+
+    td {
+        font-size: 13px;
+    }
+
+    .search {
+        justify-content: center;
+    }
+
+    .mobile-tablo {
+        display: table-row;
+    }
+
+    .normal-tablo {
+        display: none;
+    }
+
+    .diskutu {
+        margin-bottom: 1rem;
+    }
+
+    .dash-bilgiler {
+        display: none
+    }
+
+    .kutucuk-tarih {
+        display: none
+    }
+
+    .kutucuk {
+        padding: 2% 5%
+    }
+
+    .kutucuk-sayi {
+        padding-bottom: 0%;
+    }
+
+    .musteri button.btn.btn-primary {
+        width: 100%;
+    }
+
+    .form-group.logo img {
+        width: 50%;
+    }
+
+    .teklif-btn {
+        font-size: 19px;
+        margin-top: 15px;
+        margin-bottom: 10px;
+    }
+}
+
+#totalPrice {
+    grid-column: -1;
+}
+
+
+.popover {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1060;
+    display: block;
+    max-width: 339px;
+    font-family: var(--bs-font-sans-serif);
+    font-style: normal;
+    font-weight: 400;
+    line-height: 1.5;
+    text-align: left;
+    text-align: start;
+    text-decoration: none;
+    text-shadow: none;
+    text-transform: none;
+    letter-spacing: normal;
+    word-break: normal;
+    word-spacing: normal;
+    white-space: normal;
+    line-break: auto;
+    font-size: .875rem;
+    word-wrap: break-word;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid rgba(0,0,0,.2);
+    border-radius: 0.3rem;
+    width: 100% !important;
 }

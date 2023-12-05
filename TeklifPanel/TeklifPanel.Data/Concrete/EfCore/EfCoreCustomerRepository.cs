@@ -42,6 +42,7 @@ namespace TeklifPanel.Data.Concrete.EfCore
             var customer = await context.Customers
                 .Where(c => c.Id == customerId)
                 .Include(c => c.CustomerContacts)
+                .Include(c => c.Company)
                 .FirstOrDefaultAsync();
             return customer;
         }

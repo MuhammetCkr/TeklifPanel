@@ -4,20 +4,22 @@
 }
 
 <div class="container giris">
-
     <div class="row">
         <div class="col-lg-3 col-md-2"></div>
         <div class="col-lg-6 col-md-8 login-box">
             <div class="col-lg-12 login-key">
                 @*<i class="fa fa-key" aria-hidden="true"></i>*@
-                <img src="~/content/images/logo/ttr.png" >
+                <img src="~/content/images/logo/400x400.png" width="20%">
             </div>
             <div class="col-lg-12 login-title">
                 TEKLİF PANELİ
             </div>
-
             <div class="col-lg-12 login-form">
                 <div class="col-lg-12 login-form">
+                    @if (TempData["Message"] != null)
+                    {
+                        <div class="alert alert-success" role="alert">@TempData["Message"]</div>
+                    }
                     <form asp-controller="Login" asp-action="Login" method="post">
                         <div class="form-group">
                             <label class="form-control-label">KULLANICI ADI</label>
@@ -29,16 +31,19 @@
                         </div>
 
                         <div class="col-lg-12 loginbttm">
+                            <div class="col-lg-6 login-btm login-button">
+                                <button type="submit" class="btn btn-outline-primary">GİRİŞ</button>
+                            </div>
                             <div class="col-lg-6 login-btm login-text">
+                                <a asp-controller="Password" asp-action="ForgotPassword">Şifremi Unuttum</a>
+
                                 <!-- Error Message -->
                                 @if (TempData["AlertMessage"] != null)
                                 {
                                     <div class="alert alert-danger" role="alert">@TempData["AlertMessage"]</div>
                                 }
                             </div>
-                            <div class="col-lg-6 login-btm login-button">
-                                <button type="submit" class="btn btn-outline-primary">GİRİŞ</button>
-                            </div>
+
                         </div>
                     </form>
                 </div>
@@ -48,25 +53,4 @@
     </div>
 </div>
 
-
-@*<div class="login-box">
-    @if (TempData["AlertMessage"] != null)
-    {
-        <div class="alert alert-danger" role="alert">@TempData["AlertMessage"]</div>
-    }
-    <h2>Teklif Oluşturma Paneline Hoşgeldiniz</h2>
-    <form asp-controller="Login" asp-action="Login" method="post">
-        <div class="user-box">
-            <input type="email" required="" asp-for="Email">
-            <label>E-mail</label>
-        </div>
-        <div class="user-box">
-            <input type="password" required="" asp-for="Password">
-            <label>Şifre</label>
-        </div>
-        <button class="btn" type="submit">
-            Giriş
-        </button>
-    </form>
-</div>*@
 

@@ -1932,7 +1932,8 @@
   var end = 'end';
   var clippingParents = 'clippingParents';
   var viewport = 'viewport';
-  var popper = 'popper';
+  var 
+  = 'popper';
   var reference = 'reference';
   var variationPlacements = /*#__PURE__*/basePlacements.reduce(function (acc, placement) {
     return acc.concat([placement + "-" + start, placement + "-" + end]);
